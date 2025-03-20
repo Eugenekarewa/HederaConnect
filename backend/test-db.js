@@ -1,4 +1,4 @@
-const db = require('./db');
+const db = require('./db'); // Ensure you have a db.js file with the correct setup
 
 async function testConnection() {
   try {
