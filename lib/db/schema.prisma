@@ -1,0 +1,128 @@
+// This is an example Prisma schema file for HederaConnect
+// In a real project, you would set up PostgreSQL and use this schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id              String    @id @default(uuid())
+  name            String
+  username        String    @unique
+  email           String    @unique
+  passwordHash    String?
+  avatar          String?
+  hederaAccountId String?
+  bio             String?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  
+  articles        Article[]
+  engagements     Engagement[]
+  rewards         UserReward[]
+  verifications   Verification[]
+}
+
+model Article {
+  id              String    @id @default(uuid())
+  title           String
+  summary         String
+  content         String
+  coverImage      String?
+  sourceUrl       String?
+  sourceName      String?
+  ipfsHash        String?
+  arweaveHash     String?
+  hederaTopicId   String?
+  hederaMessageId String?
+  isVerified      Boolean   @default(false)
+  publishedAt     DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  
+  authorId        String
+  author          User      @relation(fields: [authorId], references: [id])
+  
+  tags            Tag[]     @relation("ArticleTags")
+  engagements     Engagement[]
+  verifications   Verification[]
+  
+  @@index([authorId])
+  @@index([publishedAt])
+  @@index([isVerified])
+}
+
+model Tag {
+  id        String    @id @default(uuid())
+  name      String    @unique
+  createdAt DateTime  @default(now())
+  
+  articles  Article[] @relation("ArticleTags")
+  
+  @@index([name])
+}
+
+model Engagement {
+  id          String    @id @default(uuid())
+  type        String    // like, share, comment
+  pointsEarned Int      @default(0)
+  createdAt   DateTime  @default(now())
+  
+  userId      String
+  user        User      @relation(fields: [userId], references: [id])
+  
+  articleId   String
+  article     Article   @relation(fields: [articleId], references: [id])
+  
+  @@index([userId])
+  @@index([articleId])
+  @@index([type])
+}
+
+model UserReward {
+  id            String    @id @default(uuid())
+  amount        Float
+  points        Int
+  reason        String
+  transactionId String?
+  createdAt     DateTime  @default(now())
+  
+  userId        String
+  user          User      @relation(fields: [userId], references: [id])
+  
+  @@index([userId])
+  @@index([createdAt])
+}
+
+model Verification {
+  id          String    @id @default(uuid())
+  status      String    // verified, rejected
+  reason      String?
+  createdAt   DateTime  @default(now())
+  
+  userId      String
+  user        User      @relation(fields: [userId], references: [id])
+  
+  articleId   String
+  article     Article   @relation(fields: [articleId], references: [id])
+  
+  @@index([userId])
+  @@index([articleId])
+}
+
+model HederaTransaction {
+  id              String    @id @default(uuid())
+  transactionId   String    @unique
+  type            String    // topic_message, token_transfer
+  status          String
+  data            Json
+  createdAt       DateTime  @default(now())
+  
+  @@index([transactionId])
+  @@index([type])
+}
+
