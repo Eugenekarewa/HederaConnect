@@ -2,15 +2,24 @@
 
 import Link from "next/link"
 import { useState } from "react"
-import { Search, Menu, X, User, Moon, Sun } from "lucide-react"
+import { Search, Menu, X, Moon, Sun, LogOut } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { useTheme } from "next-themes"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuSeparator,
+} from "@/components/ui/dropdown-menu"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { useAuth } from "@/lib/auth/auth-context"
 
 export default function MainHeader() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const { setTheme } = useTheme()
+  const { user, logout } = useAuth()
 
   return (
     <header className="border-b sticky top-0 z-40 bg-background">
@@ -30,9 +39,11 @@ export default function MainHeader() {
               <Link href="/topics" className="text-sm font-medium hover:text-primary">
                 Topics
               </Link>
-              <Link href="/rewards" className="text-sm font-medium hover:text-primary">
-                Rewards
-              </Link>
+              {user && (
+                <Link href="/rewards" className="text-sm font-medium hover:text-primary">
+                  Rewards
+                </Link>
+              )}
               <Link href="/about" className="text-sm font-medium hover:text-primary">
                 About
               </Link>
@@ -60,16 +71,38 @@ export default function MainHeader() {
               </DropdownMenuContent>
             </DropdownMenu>
 
-            <Button variant="ghost" size="icon" asChild>
-              <Link href="/profile">
-                <User className="h-5 w-5" />
-                <span className="sr-only">Profile</span>
-              </Link>
-            </Button>
-
-            <Button variant="default" asChild>
-              <Link href="/login">Sign In</Link>
-            </Button>
+            {user ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="icon" className="rounded-full">
+                    <Avatar className="h-8 w-8">
+                      <AvatarImage src={user.avatar} alt={user.name} />
+                      <AvatarFallback>{user.name.slice(0, 2)}</AvatarFallback>
+                    </Avatar>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem asChild>
+                    <Link href={`/${user.username}`}>Profile</Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link href="/dashboard">Dashboard</Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link href="/settings">Settings</Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={logout} className="text-destructive">
+                    <LogOut className="h-4 w-4 mr-2" />
+                    Logout
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <Button variant="default" asChild>
+                <Link href="/login">Sign In</Link>
+              </Button>
+            )}
           </div>
 
           <div className="md:hidden flex items-center">
@@ -93,9 +126,11 @@ export default function MainHeader() {
             <Link href="/topics" className="text-sm font-medium hover:text-primary">
               Topics
             </Link>
-            <Link href="/rewards" className="text-sm font-medium hover:text-primary">
-              Rewards
-            </Link>
+            {user && (
+              <Link href="/rewards" className="text-sm font-medium hover:text-primary">
+                Rewards
+              </Link>
+            )}
             <Link href="/about" className="text-sm font-medium hover:text-primary">
               About
             </Link>
@@ -105,9 +140,34 @@ export default function MainHeader() {
               <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
               <Input type="search" placeholder="Search articles..." className="w-full pl-8" />
             </div>
-            <Button variant="default" className="w-full" asChild>
-              <Link href="/login">Sign In</Link>
-            </Button>
+            {user ? (
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 p-2 border rounded-md">
+                  <Avatar className="h-8 w-8">
+                    <AvatarImage src={user.avatar} alt={user.name} />
+                    <AvatarFallback>{user.name.slice(0, 2)}</AvatarFallback>
+                  </Avatar>
+                  <div className="flex-1">
+                    <div className="font-medium">{user.name}</div>
+                    <div className="text-xs text-muted-foreground">@{user.username}</div>
+                  </div>
+                </div>
+                <Button variant="outline" className="w-full" asChild>
+                  <Link href={`/${user.username}`}>View Profile</Link>
+                </Button>
+                <Button variant="outline" className="w-full" asChild>
+                  <Link href="/dashboard">Dashboard</Link>
+                </Button>
+                <Button variant="destructive" className="w-full" onClick={logout}>
+                  <LogOut className="h-4 w-4 mr-2" />
+                  Logout
+                </Button>
+              </div>
+            ) : (
+              <Button variant="default" className="w-full" asChild>
+                <Link href="/login">Sign In</Link>
+              </Button>
+            )}
           </div>
         </div>
       )}

@@ -17,8 +17,81 @@ import {
   Youtube,
 } from "lucide-react"
 import Link from "next/link"
+import { db } from "@/lib/db"
 
-export default function ContentExplorerPage() {
+export default async function ContentExplorerPage({
+  searchParams,
+}: {
+  searchParams: { platform?: string; tag?: string; q?: string }
+}) {
+  // Build the query based on search parameters
+  const where = {}
+
+  if (searchParams.platform) {
+    where.platform = searchParams.platform
+  }
+
+  if (searchParams.tag) {
+    where.tags = {
+      has: searchParams.tag,
+    }
+  }
+
+  if (searchParams.q) {
+    where.OR = [
+      { title: { contains: searchParams.q, mode: "insensitive" } },
+      { summary: { contains: searchParams.q, mode: "insensitive" } },
+      { content: { contains: searchParams.q, mode: "insensitive" } },
+    ]
+  }
+
+  // Fetch content from the database
+  const content = await db.scrapedContent.findMany({
+    where,
+    orderBy: {
+      publishedAt: "desc",
+    },
+    take: 20,
+  })
+
+  // Get counts for each platform for the tabs
+  const platformCounts = await db.scrapedContent.groupBy({
+    by: ["platform"],
+    _count: {
+      id: true,
+    },
+  })
+
+  const counts = {
+    all: await db.scrapedContent.count(),
+    twitter: 0,
+    linkedin: 0,
+    medium: 0,
+    reddit: 0,
+    youtube: 0,
+  }
+
+  platformCounts.forEach((item) => {
+    counts[item.platform] = item._count.id
+  })
+
+  const getPlatformIcon = (platform: string) => {
+    switch (platform) {
+      case "twitter":
+        return <Twitter className="h-4 w-4" />
+      case "linkedin":
+        return <Linkedin className="h-4 w-4" />
+      case "medium":
+        return <FileText className="h-4 w-4" />
+      case "reddit":
+        return <MessageSquare className="h-4 w-4" />
+      case "youtube":
+        return <Youtube className="h-4 w-4" />
+      default:
+        return null
+    }
+  }
+
   return (
     <div className="min-h-screen flex flex-col">
       <MainHeader />
@@ -33,7 +106,15 @@ export default function ContentExplorerPage() {
         <div className="flex flex-col md:flex-row gap-4 mb-6">
           <div className="relative flex-1">
             <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-            <Input type="search" placeholder="Search for Hedera content..." className="pl-8" />
+            <form>
+              <Input
+                type="search"
+                name="q"
+                placeholder="Search for Hedera content..."
+                className="pl-8"
+                defaultValue={searchParams.q || ""}
+              />
+            </form>
           </div>
           <Button variant="outline">
             <Filter className="h-4 w-4 mr-2" />
@@ -41,699 +122,95 @@ export default function ContentExplorerPage() {
           </Button>
         </div>
 
-        <Tabs defaultValue="all" className="mb-8">
+        <Tabs defaultValue={searchParams.platform || "all"} className="mb-8">
           <TabsList className="w-full flex overflow-x-auto md:w-auto md:inline-flex">
-            <TabsTrigger value="all">All Sources</TabsTrigger>
-            <TabsTrigger value="twitter">Twitter</TabsTrigger>
-            <TabsTrigger value="linkedin">LinkedIn</TabsTrigger>
-            <TabsTrigger value="medium">Medium</TabsTrigger>
-            <TabsTrigger value="reddit">Reddit</TabsTrigger>
-            <TabsTrigger value="youtube">YouTube</TabsTrigger>
+            <TabsTrigger value="all" asChild>
+              <Link href="/content-explorer">All Sources ({counts.all})</Link>
+            </TabsTrigger>
+            <TabsTrigger value="twitter" asChild>
+              <Link href="/content-explorer?platform=twitter">Twitter ({counts.twitter})</Link>
+            </TabsTrigger>
+            <TabsTrigger value="linkedin" asChild>
+              <Link href="/content-explorer?platform=linkedin">LinkedIn ({counts.linkedin})</Link>
+            </TabsTrigger>
+            <TabsTrigger value="medium" asChild>
+              <Link href="/content-explorer?platform=medium">Medium ({counts.medium})</Link>
+            </TabsTrigger>
+            <TabsTrigger value="reddit" asChild>
+              <Link href="/content-explorer?platform=reddit">Reddit ({counts.reddit})</Link>
+            </TabsTrigger>
+            <TabsTrigger value="youtube" asChild>
+              <Link href="/content-explorer?platform=youtube">YouTube ({counts.youtube})</Link>
+            </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="all" className="mt-6">
-            <div className="space-y-4">
+          <TabsContent value={searchParams.platform || "all"} className="mt-6">
+            {content.length > 0 ? (
+              <div className="space-y-4">
+                {content.map((item) => (
+                  <Card key={item.id}>
+                    <CardContent className="p-6">
+                      <div className="flex items-start gap-4">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2 mb-2">
+                            <Badge variant="outline" className="flex items-center gap-1">
+                              {getPlatformIcon(item.platform)}
+                              <span className="capitalize">{item.platform}</span>
+                            </Badge>
+                            <span className="text-xs text-muted-foreground">
+                              {new Date(item.publishedAt).toLocaleDateString()}
+                            </span>
+                          </div>
+
+                          <h3 className="text-lg font-bold mb-1">{item.title}</h3>
+                          <p className="text-muted-foreground mb-3">{item.summary}</p>
+
+                          <div className="flex items-center gap-2 mb-3">
+                            <Avatar className="h-6 w-6">
+                              <AvatarImage src={item.authorAvatar} alt={item.authorName} />
+                              <AvatarFallback>{item.authorName.slice(0, 2)}</AvatarFallback>
+                            </Avatar>
+                            <span className="text-sm">{item.authorName}</span>
+                          </div>
+
+                          <div className="flex flex-wrap gap-2">
+                            {item.tags.map((tag) => (
+                              <Badge key={tag} variant="secondary" className="text-xs">
+                                {tag}
+                              </Badge>
+                            ))}
+                          </div>
+                        </div>
+
+                        <div className="flex flex-col gap-2">
+                          <Button variant="outline" size="sm" asChild>
+                            <Link href={`/articles/imported-${item.id}`}>
+                              <ArrowRight className="mr-2 h-3 w-3" />
+                              Read More
+                            </Link>
+                          </Button>
+                          <Button variant="outline" size="sm" asChild>
+                            <a href={item.url} target="_blank" rel="noopener noreferrer">
+                              <ExternalLink className="mr-2 h-3 w-3" />
+                              Original Source
+                            </a>
+                          </Button>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            ) : (
               <Card>
-                <CardContent className="p-6">
-                  <div className="flex items-start gap-4">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-2">
-                        <Badge variant="outline" className="flex items-center gap-1">
-                          <Twitter className="h-4 w-4" />
-                          <span>Twitter</span>
-                        </Badge>
-                        <span className="text-xs text-muted-foreground">2 days ago</span>
-                      </div>
-
-                      <h3 className="text-lg font-bold mb-1">
-                        Hedera's HBAR Foundation Announces $155M Sustainability Fund
-                      </h3>
-                      <p className="text-muted-foreground mb-3">
-                        The HBAR Foundation has announced a new $155M Sustainability Fund to focus on ESG-related
-                        projects built on Hedera.
-                      </p>
-
-                      <div className="flex items-center gap-2 mb-3">
-                        <Avatar className="h-6 w-6">
-                          <AvatarImage
-                            src="https://images.unsplash.com/photo-1611605698335-8b1569810432?q=80&w=2940&auto=format&fit=crop"
-                            alt="Hedera"
-                          />
-                          <AvatarFallback>HE</AvatarFallback>
-                        </Avatar>
-                        <span className="text-sm">Hedera</span>
-                      </div>
-
-                      <div className="flex flex-wrap gap-2">
-                        <Badge variant="secondary" className="text-xs">
-                          Hedera
-                        </Badge>
-                        <Badge variant="secondary" className="text-xs">
-                          Sustainability
-                        </Badge>
-                        <Badge variant="secondary" className="text-xs">
-                          ESG
-                        </Badge>
-                        <Badge variant="secondary" className="text-xs">
-                          Funding
-                        </Badge>
-                      </div>
-                    </div>
-
-                    <div className="flex flex-col gap-2">
-                      <Button variant="outline" size="sm" asChild>
-                        <Link href="/articles/imported-1">
-                          <ArrowRight className="mr-2 h-3 w-3" />
-                          Read More
-                        </Link>
-                      </Button>
-                      <Button variant="outline" size="sm" asChild>
-                        <a
-                          href="https://twitter.com/hedera/status/1234567890"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          <ExternalLink className="mr-2 h-3 w-3" />
-                          Original Source
-                        </a>
-                      </Button>
-                    </div>
-                  </div>
+                <CardContent className="p-12 text-center">
+                  <p className="text-muted-foreground mb-4">No content found. Try adjusting your search criteria.</p>
+                  <Button asChild>
+                    <Link href="/admin/content-aggregation">Scrape New Content</Link>
+                  </Button>
                 </CardContent>
               </Card>
-
-              <Card>
-                <CardContent className="p-6">
-                  <div className="flex items-start gap-4">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-2">
-                        <Badge variant="outline" className="flex items-center gap-1">
-                          <FileText className="h-4 w-4" />
-                          <span>Medium</span>
-                        </Badge>
-                        <span className="text-xs text-muted-foreground">1 week ago</span>
-                      </div>
-
-                      <h3 className="text-lg font-bold mb-1">Understanding Hedera Token Service (HTS)</h3>
-                      <p className="text-muted-foreground mb-3">
-                        A comprehensive guide to creating and managing tokens on Hedera.
-                      </p>
-
-                      <div className="flex items-center gap-2 mb-3">
-                        <Avatar className="h-6 w-6">
-                          <AvatarImage
-                            src="https://images.unsplash.com/photo-1611162616475-46b635cb6868?q=80&w=2574&auto=format&fit=crop"
-                            alt="Hedera Developer Team"
-                          />
-                          <AvatarFallback>HD</AvatarFallback>
-                        </Avatar>
-                        <span className="text-sm">Hedera Developer Team</span>
-                      </div>
-
-                      <div className="flex flex-wrap gap-2">
-                        <Badge variant="secondary" className="text-xs">
-                          Hedera
-                        </Badge>
-                        <Badge variant="secondary" className="text-xs">
-                          HTS
-                        </Badge>
-                        <Badge variant="secondary" className="text-xs">
-                          Tokens
-                        </Badge>
-                        <Badge variant="secondary" className="text-xs">
-                          Development
-                        </Badge>
-                      </div>
-                    </div>
-
-                    <div className="flex flex-col gap-2">
-                      <Button variant="outline" size="sm" asChild>
-                        <Link href="/articles/imported-2">
-                          <ArrowRight className="mr-2 h-3 w-3" />
-                          Read More
-                        </Link>
-                      </Button>
-                      <Button variant="outline" size="sm" asChild>
-                        <a
-                          href="https://medium.com/@hederadev/understanding-hedera-token-service"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          <ExternalLink className="mr-2 h-3 w-3" />
-                          Original Source
-                        </a>
-                      </Button>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardContent className="p-6">
-                  <div className="flex items-start gap-4">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-2">
-                        <Badge variant="outline" className="flex items-center gap-1">
-                          <Linkedin className="h-4 w-4" />
-                          <span>LinkedIn</span>
-                        </Badge>
-                        <span className="text-xs text-muted-foreground">1 week ago</span>
-                      </div>
-
-                      <h3 className="text-lg font-bold mb-1">Enterprise Use Cases for Hedera Hashgraph</h3>
-                      <p className="text-muted-foreground mb-3">
-                        Exploring how enterprises are leveraging Hedera for supply chain, identity, and compliance
-                        solutions.
-                      </p>
-
-                      <div className="flex items-center gap-2 mb-3">
-                        <Avatar className="h-6 w-6">
-                          <AvatarImage
-                            src="https://images.unsplash.com/photo-1611944212129-29977ae1398c?q=80&w=2574&auto=format&fit=crop"
-                            alt="Sarah Johnson"
-                          />
-                          <AvatarFallback>SJ</AvatarFallback>
-                        </Avatar>
-                        <span className="text-sm">Sarah Johnson</span>
-                      </div>
-
-                      <div className="flex flex-wrap gap-2">
-                        <Badge variant="secondary" className="text-xs">
-                          Hedera
-                        </Badge>
-                        <Badge variant="secondary" className="text-xs">
-                          Enterprise
-                        </Badge>
-                        <Badge variant="secondary" className="text-xs">
-                          Use Cases
-                        </Badge>
-                        <Badge variant="secondary" className="text-xs">
-                          DLT
-                        </Badge>
-                      </div>
-                    </div>
-
-                    <div className="flex flex-col gap-2">
-                      <Button variant="outline" size="sm" asChild>
-                        <Link href="/articles/imported-3">
-                          <ArrowRight className="mr-2 h-3 w-3" />
-                          Read More
-                        </Link>
-                      </Button>
-                      <Button variant="outline" size="sm" asChild>
-                        <a
-                          href="https://linkedin.com/pulse/enterprise-use-cases-hedera-hashgraph"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          <ExternalLink className="mr-2 h-3 w-3" />
-                          Original Source
-                        </a>
-                      </Button>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardContent className="p-6">
-                  <div className="flex items-start gap-4">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-2">
-                        <Badge variant="outline" className="flex items-center gap-1">
-                          <Youtube className="h-4 w-4" />
-                          <span>YouTube</span>
-                        </Badge>
-                        <span className="text-xs text-muted-foreground">1 month ago</span>
-                      </div>
-
-                      <h3 className="text-lg font-bold mb-1">
-                        Hedera Hashgraph Explained: The Future of Distributed Ledger Technology
-                      </h3>
-                      <p className="text-muted-foreground mb-3">
-                        A comprehensive video explanation of Hedera Hashgraph and its advantages.
-                      </p>
-
-                      <div className="flex items-center gap-2 mb-3">
-                        <Avatar className="h-6 w-6">
-                          <AvatarImage
-                            src="https://images.unsplash.com/photo-1611162616475-46b635cb6868?q=80&w=2574&auto=format&fit=crop"
-                            alt="Crypto Explained"
-                          />
-                          <AvatarFallback>CE</AvatarFallback>
-                        </Avatar>
-                        <span className="text-sm">Crypto Explained</span>
-                      </div>
-
-                      <div className="flex flex-wrap gap-2">
-                        <Badge variant="secondary" className="text-xs">
-                          Hedera
-                        </Badge>
-                        <Badge variant="secondary" className="text-xs">
-                          Hashgraph
-                        </Badge>
-                        <Badge variant="secondary" className="text-xs">
-                          DLT
-                        </Badge>
-                        <Badge variant="secondary" className="text-xs">
-                          Explanation
-                        </Badge>
-                      </div>
-                    </div>
-
-                    <div className="flex flex-col gap-2">
-                      <Button variant="outline" size="sm" asChild>
-                        <Link href="/articles/imported-4">
-                          <ArrowRight className="mr-2 h-3 w-3" />
-                          Read More
-                        </Link>
-                      </Button>
-                      <Button variant="outline" size="sm" asChild>
-                        <a href="https://youtube.com/watch?v=abc123" target="_blank" rel="noopener noreferrer">
-                          <ExternalLink className="mr-2 h-3 w-3" />
-                          Watch Video
-                        </a>
-                      </Button>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          </TabsContent>
-
-          <TabsContent value="twitter" className="mt-6">
-            <div className="space-y-4">
-              <Card>
-                <CardContent className="p-6">
-                  <div className="flex items-start gap-4">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-2">
-                        <Badge variant="outline" className="flex items-center gap-1">
-                          <Twitter className="h-4 w-4" />
-                          <span>Twitter</span>
-                        </Badge>
-                        <span className="text-xs text-muted-foreground">2 days ago</span>
-                      </div>
-
-                      <h3 className="text-lg font-bold mb-1">
-                        Hedera's HBAR Foundation Announces $155M Sustainability Fund
-                      </h3>
-                      <p className="text-muted-foreground mb-3">
-                        The HBAR Foundation has announced a new $155M Sustainability Fund to focus on ESG-related
-                        projects built on Hedera.
-                      </p>
-
-                      <div className="flex items-center gap-2 mb-3">
-                        <Avatar className="h-6 w-6">
-                          <AvatarImage
-                            src="https://images.unsplash.com/photo-1611605698335-8b1569810432?q=80&w=2940&auto=format&fit=crop"
-                            alt="Hedera"
-                          />
-                          <AvatarFallback>HE</AvatarFallback>
-                        </Avatar>
-                        <span className="text-sm">Hedera</span>
-                      </div>
-
-                      <div className="flex flex-wrap gap-2">
-                        <Badge variant="secondary" className="text-xs">
-                          Hedera
-                        </Badge>
-                        <Badge variant="secondary" className="text-xs">
-                          Sustainability
-                        </Badge>
-                        <Badge variant="secondary" className="text-xs">
-                          ESG
-                        </Badge>
-                        <Badge variant="secondary" className="text-xs">
-                          Funding
-                        </Badge>
-                      </div>
-                    </div>
-
-                    <div className="flex flex-col gap-2">
-                      <Button variant="outline" size="sm" asChild>
-                        <Link href="/articles/imported-1">
-                          <ArrowRight className="mr-2 h-3 w-3" />
-                          Read More
-                        </Link>
-                      </Button>
-                      <Button variant="outline" size="sm" asChild>
-                        <a
-                          href="https://twitter.com/hedera/status/1234567890"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          <ExternalLink className="mr-2 h-3 w-3" />
-                          Original Source
-                        </a>
-                      </Button>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardContent className="p-6">
-                  <div className="flex items-start gap-4">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-2">
-                        <Badge variant="outline" className="flex items-center gap-1">
-                          <Twitter className="h-4 w-4" />
-                          <span>Twitter</span>
-                        </Badge>
-                        <span className="text-xs text-muted-foreground">5 days ago</span>
-                      </div>
-
-                      <h3 className="text-lg font-bold mb-1">Tutorial: Building Your First Hedera Smart Contract</h3>
-                      <p className="text-muted-foreground mb-3">
-                        A step-by-step guide to deploying your first smart contract on Hedera.
-                      </p>
-
-                      <div className="flex items-center gap-2 mb-3">
-                        <Avatar className="h-6 w-6">
-                          <AvatarImage
-                            src="https://images.unsplash.com/photo-1611605698335-8b1569810432?q=80&w=2940&auto=format&fit=crop"
-                            alt="Hedera Developer"
-                          />
-                          <AvatarFallback>HD</AvatarFallback>
-                        </Avatar>
-                        <span className="text-sm">Hedera Developer</span>
-                      </div>
-
-                      <div className="flex flex-wrap gap-2">
-                        <Badge variant="secondary" className="text-xs">
-                          Hedera
-                        </Badge>
-                        <Badge variant="secondary" className="text-xs">
-                          Smart Contracts
-                        </Badge>
-                        <Badge variant="secondary" className="text-xs">
-                          Development
-                        </Badge>
-                        <Badge variant="secondary" className="text-xs">
-                          Tutorial
-                        </Badge>
-                      </div>
-                    </div>
-
-                    <div className="flex flex-col gap-2">
-                      <Button variant="outline" size="sm" asChild>
-                        <Link href="/articles/imported-5">
-                          <ArrowRight className="mr-2 h-3 w-3" />
-                          Read More
-                        </Link>
-                      </Button>
-                      <Button variant="outline" size="sm" asChild>
-                        <a
-                          href="https://twitter.com/hederadev/status/1234567891"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          <ExternalLink className="mr-2 h-3 w-3" />
-                          Original Source
-                        </a>
-                      </Button>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          </TabsContent>
-
-          {/* Other platform tabs would follow the same pattern */}
-          <TabsContent value="linkedin" className="mt-6">
-            <div className="space-y-4">
-              <Card>
-                <CardContent className="p-6">
-                  <div className="flex items-start gap-4">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-2">
-                        <Badge variant="outline" className="flex items-center gap-1">
-                          <Linkedin className="h-4 w-4" />
-                          <span>LinkedIn</span>
-                        </Badge>
-                        <span className="text-xs text-muted-foreground">1 week ago</span>
-                      </div>
-
-                      <h3 className="text-lg font-bold mb-1">Enterprise Use Cases for Hedera Hashgraph</h3>
-                      <p className="text-muted-foreground mb-3">
-                        Exploring how enterprises are leveraging Hedera for supply chain, identity, and compliance
-                        solutions.
-                      </p>
-
-                      <div className="flex items-center gap-2 mb-3">
-                        <Avatar className="h-6 w-6">
-                          <AvatarImage
-                            src="https://images.unsplash.com/photo-1611944212129-29977ae1398c?q=80&w=2574&auto=format&fit=crop"
-                            alt="Sarah Johnson"
-                          />
-                          <AvatarFallback>SJ</AvatarFallback>
-                        </Avatar>
-                        <span className="text-sm">Sarah Johnson</span>
-                      </div>
-
-                      <div className="flex flex-wrap gap-2">
-                        <Badge variant="secondary" className="text-xs">
-                          Hedera
-                        </Badge>
-                        <Badge variant="secondary" className="text-xs">
-                          Enterprise
-                        </Badge>
-                        <Badge variant="secondary" className="text-xs">
-                          Use Cases
-                        </Badge>
-                        <Badge variant="secondary" className="text-xs">
-                          DLT
-                        </Badge>
-                      </div>
-                    </div>
-
-                    <div className="flex flex-col gap-2">
-                      <Button variant="outline" size="sm" asChild>
-                        <Link href="/articles/imported-3">
-                          <ArrowRight className="mr-2 h-3 w-3" />
-                          Read More
-                        </Link>
-                      </Button>
-                      <Button variant="outline" size="sm" asChild>
-                        <a
-                          href="https://linkedin.com/pulse/enterprise-use-cases-hedera-hashgraph"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          <ExternalLink className="mr-2 h-3 w-3" />
-                          Original Source
-                        </a>
-                      </Button>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          </TabsContent>
-
-          <TabsContent value="medium" className="mt-6">
-            <div className="space-y-4">
-              <Card>
-                <CardContent className="p-6">
-                  <div className="flex items-start gap-4">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-2">
-                        <Badge variant="outline" className="flex items-center gap-1">
-                          <FileText className="h-4 w-4" />
-                          <span>Medium</span>
-                        </Badge>
-                        <span className="text-xs text-muted-foreground">1 week ago</span>
-                      </div>
-
-                      <h3 className="text-lg font-bold mb-1">Understanding Hedera Token Service (HTS)</h3>
-                      <p className="text-muted-foreground mb-3">
-                        A comprehensive guide to creating and managing tokens on Hedera.
-                      </p>
-
-                      <div className="flex items-center gap-2 mb-3">
-                        <Avatar className="h-6 w-6">
-                          <AvatarImage
-                            src="https://images.unsplash.com/photo-1611162616475-46b635cb6868?q=80&w=2574&auto=format&fit=crop"
-                            alt="Hedera Developer Team"
-                          />
-                          <AvatarFallback>HD</AvatarFallback>
-                        </Avatar>
-                        <span className="text-sm">Hedera Developer Team</span>
-                      </div>
-
-                      <div className="flex flex-wrap gap-2">
-                        <Badge variant="secondary" className="text-xs">
-                          Hedera
-                        </Badge>
-                        <Badge variant="secondary" className="text-xs">
-                          HTS
-                        </Badge>
-                        <Badge variant="secondary" className="text-xs">
-                          Tokens
-                        </Badge>
-                        <Badge variant="secondary" className="text-xs">
-                          Development
-                        </Badge>
-                      </div>
-                    </div>
-
-                    <div className="flex flex-col gap-2">
-                      <Button variant="outline" size="sm" asChild>
-                        <Link href="/articles/imported-2">
-                          <ArrowRight className="mr-2 h-3 w-3" />
-                          Read More
-                        </Link>
-                      </Button>
-                      <Button variant="outline" size="sm" asChild>
-                        <a
-                          href="https://medium.com/@hederadev/understanding-hedera-token-service"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          <ExternalLink className="mr-2 h-3 w-3" />
-                          Original Source
-                        </a>
-                      </Button>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          </TabsContent>
-
-          <TabsContent value="reddit" className="mt-6">
-            <div className="space-y-4">
-              <Card>
-                <CardContent className="p-6">
-                  <div className="flex items-start gap-4">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-2">
-                        <Badge variant="outline" className="flex items-center gap-1">
-                          <MessageSquare className="h-4 w-4" />
-                          <span>Reddit</span>
-                        </Badge>
-                        <span className="text-xs text-muted-foreground">10 days ago</span>
-                      </div>
-
-                      <h3 className="text-lg font-bold mb-1">ELI5: How does Hedera Hashgraph achieve consensus?</h3>
-                      <p className="text-muted-foreground mb-3">
-                        A simplified explanation of Hedera's consensus mechanism for beginners.
-                      </p>
-
-                      <div className="flex items-center gap-2 mb-3">
-                        <Avatar className="h-6 w-6">
-                          <AvatarImage
-                            src="https://images.unsplash.com/photo-1611162616475-46b635cb6868?q=80&w=2574&auto=format&fit=crop"
-                            alt="hedera_enthusiast"
-                          />
-                          <AvatarFallback>HE</AvatarFallback>
-                        </Avatar>
-                        <span className="text-sm">hedera_enthusiast</span>
-                      </div>
-
-                      <div className="flex flex-wrap gap-2">
-                        <Badge variant="secondary" className="text-xs">
-                          Hedera
-                        </Badge>
-                        <Badge variant="secondary" className="text-xs">
-                          Consensus
-                        </Badge>
-                        <Badge variant="secondary" className="text-xs">
-                          Beginner
-                        </Badge>
-                        <Badge variant="secondary" className="text-xs">
-                          Explanation
-                        </Badge>
-                      </div>
-                    </div>
-
-                    <div className="flex flex-col gap-2">
-                      <Button variant="outline" size="sm" asChild>
-                        <Link href="/articles/imported-6">
-                          <ArrowRight className="mr-2 h-3 w-3" />
-                          Read More
-                        </Link>
-                      </Button>
-                      <Button variant="outline" size="sm" asChild>
-                        <a href="https://reddit.com/r/Hedera/comments/abc123" target="_blank" rel="noopener noreferrer">
-                          <ExternalLink className="mr-2 h-3 w-3" />
-                          Original Source
-                        </a>
-                      </Button>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          </TabsContent>
-
-          <TabsContent value="youtube" className="mt-6">
-            <div className="space-y-4">
-              <Card>
-                <CardContent className="p-6">
-                  <div className="flex items-start gap-4">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-2">
-                        <Badge variant="outline" className="flex items-center gap-1">
-                          <Youtube className="h-4 w-4" />
-                          <span>YouTube</span>
-                        </Badge>
-                        <span className="text-xs text-muted-foreground">1 month ago</span>
-                      </div>
-
-                      <h3 className="text-lg font-bold mb-1">
-                        Hedera Hashgraph Explained: The Future of Distributed Ledger Technology
-                      </h3>
-                      <p className="text-muted-foreground mb-3">
-                        A comprehensive video explanation of Hedera Hashgraph and its advantages.
-                      </p>
-
-                      <div className="flex items-center gap-2 mb-3">
-                        <Avatar className="h-6 w-6">
-                          <AvatarImage
-                            src="https://images.unsplash.com/photo-1611162616475-46b635cb6868?q=80&w=2574&auto=format&fit=crop"
-                            alt="Crypto Explained"
-                          />
-                          <AvatarFallback>CE</AvatarFallback>
-                        </Avatar>
-                        <span className="text-sm">Crypto Explained</span>
-                      </div>
-
-                      <div className="flex flex-wrap gap-2">
-                        <Badge variant="secondary" className="text-xs">
-                          Hedera
-                        </Badge>
-                        <Badge variant="secondary" className="text-xs">
-                          Hashgraph
-                        </Badge>
-                        <Badge variant="secondary" className="text-xs">
-                          DLT
-                        </Badge>
-                        <Badge variant="secondary" className="text-xs">
-                          Explanation
-                        </Badge>
-                      </div>
-                    </div>
-
-                    <div className="flex flex-col gap-2">
-                      <Button variant="outline" size="sm" asChild>
-                        <Link href="/articles/imported-4">
-                          <ArrowRight className="mr-2 h-3 w-3" />
-                          Read More
-                        </Link>
-                      </Button>
-                      <Button variant="outline" size="sm" asChild>
-                        <a href="https://youtube.com/watch?v=abc123" target="_blank" rel="noopener noreferrer">
-                          <ExternalLink className="mr-2 h-3 w-3" />
-                          Watch Video
-                        </a>
-                      </Button>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
+            )}
           </TabsContent>
         </Tabs>
       </main>

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import MainHeader from "@/components/main-header"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
@@ -32,16 +32,42 @@ import {
   Youtube,
 } from "lucide-react"
 import type { ScrapedContent, ScrapingOptions } from "@/lib/scraping/content-scraper"
-import { scrapeContent, importScrapedContent, scheduleScraping } from "@/lib/actions/scraping-actions"
+import { scrapeContent, importScrapedContent, scheduleScraping, getSavedContent } from "@/lib/actions/scraping-actions"
 import Link from "next/link"
+import { useToast } from "@/components/ui/use-toast"
 
 export default function ContentAggregationPage() {
   const [isLoading, setIsLoading] = useState(false)
   const [scrapedContent, setScrapedContent] = useState<ScrapedContent[]>([])
+  const [importedContent, setImportedContent] = useState<any[]>([])
   const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>(["twitter", "linkedin", "medium"])
   const [keywords, setKeywords] = useState<string[]>(["Hedera", "Hashgraph", "HTS", "HBAR"])
   const [timeframe, setTimeframe] = useState<string>("week")
   const [importingId, setImportingId] = useState<string | null>(null)
+  const [schedules, setSchedules] = useState<any[]>([])
+  const { toast } = useToast()
+
+  // Fetch imported content and schedules on component mount
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const result = await getSavedContent()
+        if (result.success) {
+          setImportedContent(result.data)
+        }
+
+        // Fetch schedules (this would be implemented in a real app)
+        // const schedulesResult = await getScrapingSchedules()
+        // if (schedulesResult.success) {
+        //   setSchedules(schedulesResult.data)
+        // }
+      } catch (error) {
+        console.error("Error fetching data:", error)
+      }
+    }
+
+    fetchData()
+  }, [])
 
   const handleScrape = async () => {
     setIsLoading(true)
@@ -57,13 +83,25 @@ export default function ContentAggregationPage() {
 
       if (result.success && result.data) {
         setScrapedContent(result.data)
+        toast({
+          title: "Content scraped successfully",
+          description: `Found ${result.data.length} items from ${selectedPlatforms.join(", ")}`,
+        })
       } else {
         console.error("Failed to scrape content:", result.error)
-        // Show error message
+        toast({
+          title: "Error scraping content",
+          description: result.error || "An unexpected error occurred",
+          variant: "destructive",
+        })
       }
     } catch (error) {
       console.error("Error scraping content:", error)
-      // Show error message
+      toast({
+        title: "Error scraping content",
+        description: "An unexpected error occurred",
+        variant: "destructive",
+      })
     } finally {
       setIsLoading(false)
     }
@@ -75,18 +113,34 @@ export default function ContentAggregationPage() {
       const result = await importScrapedContent(content)
 
       if (result.success) {
-        // Show success message
-        console.log("Content imported successfully:", result.data)
+        toast({
+          title: "Content imported successfully",
+          description: `"${content.title}" has been added to your content library`,
+        })
 
         // Remove from scraped content list
         setScrapedContent((prev) => prev.filter((item) => item.url !== content.url))
+
+        // Refresh imported content
+        const savedContent = await getSavedContent()
+        if (savedContent.success) {
+          setImportedContent(savedContent.data)
+        }
       } else {
         console.error("Failed to import content:", result.error)
-        // Show error message
+        toast({
+          title: "Error importing content",
+          description: result.error || "An unexpected error occurred",
+          variant: "destructive",
+        })
       }
     } catch (error) {
       console.error("Error importing content:", error)
-      // Show error message
+      toast({
+        title: "Error importing content",
+        description: "An unexpected error occurred",
+        variant: "destructive",
+      })
     } finally {
       setImportingId(null)
     }
@@ -101,15 +155,28 @@ export default function ContentAggregationPage() {
       })
 
       if (result.success) {
-        // Show success message
-        console.log("Scraping scheduled successfully:", result.data)
+        toast({
+          title: "Scraping scheduled successfully",
+          description: `Daily scraping scheduled for ${selectedPlatforms.join(", ")}`,
+        })
+
+        // Add to schedules list
+        setSchedules((prev) => [...prev, result.data])
       } else {
         console.error("Failed to schedule scraping:", result.error)
-        // Show error message
+        toast({
+          title: "Error scheduling scraping",
+          description: result.error || "An unexpected error occurred",
+          variant: "destructive",
+        })
       }
     } catch (error) {
       console.error("Error scheduling scraping:", error)
-      // Show error message
+      toast({
+        title: "Error scheduling scraping",
+        description: "An unexpected error occurred",
+        variant: "destructive",
+      })
     }
   }
 
@@ -408,138 +475,71 @@ export default function ContentAggregationPage() {
                   </div>
                 </div>
 
-                <div className="space-y-4">
-                  <Card>
-                    <CardContent className="p-6">
-                      <div className="flex items-start gap-4">
-                        <div className="flex-1">
-                          <div className="flex items-center gap-2 mb-2">
-                            <Badge variant="outline" className="flex items-center gap-1">
-                              <Twitter className="h-4 w-4" />
-                              <span>Twitter</span>
-                            </Badge>
-                            <Badge variant="secondary">Imported</Badge>
-                            <span className="text-xs text-muted-foreground">2 days ago</span>
+                {importedContent.length > 0 ? (
+                  <div className="space-y-4">
+                    {importedContent.map((content) => (
+                      <Card key={content.id}>
+                        <CardContent className="p-6">
+                          <div className="flex items-start gap-4">
+                            <div className="flex-1">
+                              <div className="flex items-center gap-2 mb-2">
+                                <Badge variant="outline" className="flex items-center gap-1">
+                                  {getPlatformIcon(content.platform)}
+                                  <span className="capitalize">{content.platform}</span>
+                                </Badge>
+                                <Badge variant="secondary">Imported</Badge>
+                                <span className="text-xs text-muted-foreground">
+                                  {new Date(content.publishedAt).toLocaleDateString()}
+                                </span>
+                              </div>
+
+                              <h3 className="text-lg font-bold mb-1">{content.title}</h3>
+                              <p className="text-muted-foreground mb-3">{content.summary}</p>
+
+                              <div className="flex items-center gap-2 mb-3">
+                                <Avatar className="h-6 w-6">
+                                  <AvatarImage src={content.authorAvatar} alt={content.authorName} />
+                                  <AvatarFallback>{content.authorName.slice(0, 2)}</AvatarFallback>
+                                </Avatar>
+                                <span className="text-sm">{content.authorName}</span>
+                              </div>
+
+                              <div className="flex flex-wrap gap-2">
+                                {content.tags.map((tag) => (
+                                  <Badge key={tag} variant="secondary" className="text-xs">
+                                    {tag}
+                                  </Badge>
+                                ))}
+                              </div>
+                            </div>
+
+                            <div className="flex flex-col gap-2">
+                              <Button variant="outline" size="sm" asChild>
+                                <Link href={`/articles/imported-${content.id}`}>
+                                  <ArrowRight className="mr-2 h-3 w-3" />
+                                  View
+                                </Link>
+                              </Button>
+                              <Button variant="outline" size="sm" asChild>
+                                <a href={content.url} target="_blank" rel="noopener noreferrer">
+                                  <ExternalLink className="mr-2 h-3 w-3" />
+                                  Source
+                                </a>
+                              </Button>
+                            </div>
                           </div>
-
-                          <h3 className="text-lg font-bold mb-1">
-                            Hedera's HBAR Foundation Announces $155M Sustainability Fund
-                          </h3>
-                          <p className="text-muted-foreground mb-3">
-                            The HBAR Foundation has announced a new $155M Sustainability Fund to focus on ESG-related
-                            projects built on Hedera.
-                          </p>
-
-                          <div className="flex items-center gap-2 mb-3">
-                            <Avatar className="h-6 w-6">
-                              <AvatarImage src="/placeholder.svg?height=50&width=50" alt="Hedera" />
-                              <AvatarFallback>HE</AvatarFallback>
-                            </Avatar>
-                            <span className="text-sm">Hedera</span>
-                          </div>
-
-                          <div className="flex flex-wrap gap-2">
-                            <Badge variant="secondary" className="text-xs">
-                              Hedera
-                            </Badge>
-                            <Badge variant="secondary" className="text-xs">
-                              Sustainability
-                            </Badge>
-                            <Badge variant="secondary" className="text-xs">
-                              ESG
-                            </Badge>
-                            <Badge variant="secondary" className="text-xs">
-                              Funding
-                            </Badge>
-                          </div>
-                        </div>
-
-                        <div className="flex flex-col gap-2">
-                          <Button variant="outline" size="sm" asChild>
-                            <Link href="/articles/imported-1">
-                              <ArrowRight className="mr-2 h-3 w-3" />
-                              View
-                            </Link>
-                          </Button>
-                          <Button variant="outline" size="sm" asChild>
-                            <a
-                              href="https://twitter.com/hedera/status/1234567890"
-                              target="_blank"
-                              rel="noopener noreferrer"
-                            >
-                              <ExternalLink className="mr-2 h-3 w-3" />
-                              Source
-                            </a>
-                          </Button>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-
-                  <Card>
-                    <CardContent className="p-6">
-                      <div className="flex items-start gap-4">
-                        <div className="flex-1">
-                          <div className="flex items-center gap-2 mb-2">
-                            <Badge variant="outline" className="flex items-center gap-1">
-                              <FileText className="h-4 w-4" />
-                              <span>Medium</span>
-                            </Badge>
-                            <Badge variant="secondary">Imported</Badge>
-                            <span className="text-xs text-muted-foreground">1 week ago</span>
-                          </div>
-
-                          <h3 className="text-lg font-bold mb-1">Understanding Hedera Token Service (HTS)</h3>
-                          <p className="text-muted-foreground mb-3">
-                            A comprehensive guide to creating and managing tokens on Hedera.
-                          </p>
-
-                          <div className="flex items-center gap-2 mb-3">
-                            <Avatar className="h-6 w-6">
-                              <AvatarImage src="/placeholder.svg?height=50&width=50" alt="Hedera Developer Team" />
-                              <AvatarFallback>HD</AvatarFallback>
-                            </Avatar>
-                            <span className="text-sm">Hedera Developer Team</span>
-                          </div>
-
-                          <div className="flex flex-wrap gap-2">
-                            <Badge variant="secondary" className="text-xs">
-                              Hedera
-                            </Badge>
-                            <Badge variant="secondary" className="text-xs">
-                              HTS
-                            </Badge>
-                            <Badge variant="secondary" className="text-xs">
-                              Tokens
-                            </Badge>
-                            <Badge variant="secondary" className="text-xs">
-                              Development
-                            </Badge>
-                          </div>
-                        </div>
-
-                        <div className="flex flex-col gap-2">
-                          <Button variant="outline" size="sm" asChild>
-                            <Link href="/articles/imported-2">
-                              <ArrowRight className="mr-2 h-3 w-3" />
-                              View
-                            </Link>
-                          </Button>
-                          <Button variant="outline" size="sm" asChild>
-                            <a
-                              href="https://medium.com/@hederadev/understanding-hedera-token-service"
-                              target="_blank"
-                              rel="noopener noreferrer"
-                            >
-                              <ExternalLink className="mr-2 h-3 w-3" />
-                              Source
-                            </a>
-                          </Button>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </div>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-12">
+                    <p className="text-muted-foreground mb-4">No imported content yet.</p>
+                    <Button asChild>
+                      <Link href="#scrape">Import your first content</Link>
+                    </Button>
+                  </div>
+                )}
               </CardContent>
             </Card>
           </TabsContent>
@@ -563,73 +563,51 @@ export default function ContentAggregationPage() {
                     </Button>
                   </div>
 
-                  <Card>
-                    <CardContent className="p-4">
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <div className="font-medium mb-1">Daily Hedera Content</div>
-                          <div className="text-sm text-muted-foreground mb-2">Runs daily at 8:00 AM UTC</div>
-                          <div className="flex flex-wrap gap-2">
-                            <Badge variant="outline" className="flex items-center gap-1">
-                              <Twitter className="h-3 w-3" />
-                              <span>Twitter</span>
-                            </Badge>
-                            <Badge variant="outline" className="flex items-center gap-1">
-                              <Linkedin className="h-3 w-3" />
-                              <span>LinkedIn</span>
-                            </Badge>
-                            <Badge variant="outline" className="flex items-center gap-1">
-                              <FileText className="h-3 w-3" />
-                              <span>Medium</span>
-                            </Badge>
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <Badge variant="secondary" className="flex items-center gap-1">
-                            <Check className="h-3 w-3" />
-                            <span>Active</span>
-                          </Badge>
-                          <Button variant="ghost" size="icon">
-                            <Settings className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-
-                  <Card>
-                    <CardContent className="p-4">
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <div className="font-medium mb-1">Weekly Developer Content</div>
-                          <div className="text-sm text-muted-foreground mb-2">Runs every Monday at 10:00 AM UTC</div>
-                          <div className="flex flex-wrap gap-2">
-                            <Badge variant="outline" className="flex items-center gap-1">
-                              <Youtube className="h-3 w-3" />
-                              <span>YouTube</span>
-                            </Badge>
-                            <Badge variant="outline" className="flex items-center gap-1">
-                              <MessageSquare className="h-3 w-3" />
-                              <span>Reddit</span>
-                            </Badge>
-                            <Badge variant="outline" className="flex items-center gap-1">
-                              <FileText className="h-3 w-3" />
-                              <span>Medium</span>
-                            </Badge>
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <Badge variant="secondary" className="flex items-center gap-1">
-                            <Check className="h-3 w-3" />
-                            <span>Active</span>
-                          </Badge>
-                          <Button variant="ghost" size="icon">
-                            <Settings className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
+                  {schedules.length > 0 ? (
+                    <div className="space-y-4">
+                      {schedules.map((schedule) => (
+                        <Card key={schedule.id}>
+                          <CardContent className="p-4">
+                            <div className="flex items-center justify-between">
+                              <div>
+                                <div className="font-medium mb-1">{schedule.name || "Scheduled Scraping"}</div>
+                                <div className="text-sm text-muted-foreground mb-2">
+                                  Runs {schedule.frequency} at {new Date(schedule.nextRunAt).toLocaleTimeString()}
+                                </div>
+                                <div className="flex flex-wrap gap-2">
+                                  {schedule.platforms.map((platform) => (
+                                    <Badge key={platform} variant="outline" className="flex items-center gap-1">
+                                      {getPlatformIcon(platform)}
+                                      <span className="capitalize">{platform}</span>
+                                    </Badge>
+                                  ))}
+                                </div>
+                              </div>
+                              <div className="flex items-center gap-2">
+                                <Badge variant="secondary" className="flex items-center gap-1">
+                                  <Check className="h-3 w-3" />
+                                  <span>Active</span>
+                                </Badge>
+                                <Button variant="ghost" size="icon">
+                                  <Settings className="h-4 w-4" />
+                                </Button>
+                              </div>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      ))}
+                    </div>
+                  ) : (
+                    <Card>
+                      <CardContent className="p-8 text-center">
+                        <p className="text-muted-foreground mb-4">No scheduled scraping configured yet.</p>
+                        <Button onClick={handleSchedule}>
+                          <Clock className="mr-2 h-4 w-4" />
+                          Schedule Daily Scraping
+                        </Button>
+                      </CardContent>
+                    </Card>
+                  )}
                 </div>
               </CardContent>
             </Card>

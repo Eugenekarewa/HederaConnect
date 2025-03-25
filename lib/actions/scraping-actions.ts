@@ -1,8 +1,7 @@
 "use server"
 
 import { contentScraper, type ScrapedContent, type ScrapingOptions } from "../scraping/content-scraper"
-import { storageService } from "../ipfs/storage-service"
-import { topicService } from "../hedera/topic-service"
+import { db } from "../db"
 import { revalidatePath } from "next/cache"
 
 export async function scrapeContent(options: ScrapingOptions) {
@@ -11,6 +10,14 @@ export async function scrapeContent(options: ScrapingOptions) {
     const scrapedContent = await contentScraper.scrapeFromPlatforms(options)
 
     console.log(`Scraped ${scrapedContent.length} items from ${options.platforms.join(", ")}`)
+
+    // Save scraped content to database
+    for (const content of scrapedContent) {
+      await contentScraper.saveScrapedContent(content)
+    }
+
+    // Revalidate content explorer page
+    revalidatePath("/content-explorer")
 
     return {
       success: true,
@@ -27,36 +34,16 @@ export async function scrapeContent(options: ScrapingOptions) {
 
 export async function importScrapedContent(content: ScrapedContent) {
   try {
-    // In a real implementation:
-    // 1. Store the content on IPFS/Arweave
-    const contentHash = await storageService.storeContent(content.content)
+    // Save to database
+    await contentScraper.saveScrapedContent(content)
 
-    // 2. Create a record in the database
-    // This would be a database operation in a real implementation
-    console.log(`Storing content in database with hash: ${contentHash}`)
-
-    // 3. Submit a record to Hedera
-    const topicResult = await topicService.submitArticleToTopic(
-      "0.0.48620", // This would be a stored topic ID for articles
-      {
-        id: `imported-${Date.now()}`,
-        title: content.title,
-        authorId: `external-${content.platform}-${content.author.name.replace(/\s+/g, "-").toLowerCase()}`,
-        contentHash,
-        timestamp: new Date().toISOString(),
-      },
-    )
-
-    console.log(`Submitted to Hedera with transaction ID: ${topicResult.transactionId}`)
-
-    // 4. Revalidate the articles page to show the new content
-    revalidatePath("/articles")
+    // Revalidate content explorer page
+    revalidatePath("/content-explorer")
 
     return {
       success: true,
       data: {
-        contentHash,
-        transactionId: topicResult.transactionId,
+        message: "Content imported successfully",
       },
     }
   } catch (error) {
@@ -74,22 +61,89 @@ export async function scheduleScraping(schedule: {
   keywords: string[]
 }) {
   try {
-    // In a real implementation, this would set up a scheduled job
-    console.log(`Scheduled scraping: ${schedule.frequency} from ${schedule.platforms.join(", ")}`)
+    // Save the schedule to the database
+    const newSchedule = await db.scrapingSchedule.create({
+      data: {
+        frequency: schedule.frequency,
+        platforms: schedule.platforms,
+        keywords: schedule.keywords,
+        nextRunAt: getNextRunTime(schedule.frequency),
+        isActive: true,
+      },
+    })
 
     return {
       success: true,
-      data: {
-        id: `schedule-${Date.now()}`,
-        ...schedule,
-        nextRun: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(), // Mock next run time
-      },
+      data: newSchedule,
     }
   } catch (error) {
     console.error("Error scheduling scraping:", error)
     return {
       success: false,
       error: "Failed to schedule scraping",
+    }
+  }
+}
+
+// Helper function to calculate next run time based on frequency
+function getNextRunTime(frequency: "hourly" | "daily" | "weekly"): Date {
+  const now = new Date()
+
+  switch (frequency) {
+    case "hourly":
+      now.setHours(now.getHours() + 1)
+      break
+    case "daily":
+      now.setDate(now.getDate() + 1)
+      now.setHours(8, 0, 0, 0) // 8:00 AM
+      break
+    case "weekly":
+      now.setDate(now.getDate() + (7 - now.getDay())) // Next Monday
+      now.setHours(8, 0, 0, 0) // 8:00 AM
+      break
+  }
+
+  return now
+}
+
+// Function to get all saved content
+export async function getSavedContent(options?: {
+  platform?: string
+  tag?: string
+  limit?: number
+  offset?: number
+}) {
+  try {
+    const where = {}
+
+    if (options?.platform) {
+      where.platform = options.platform
+    }
+
+    if (options?.tag) {
+      where.tags = {
+        has: options.tag,
+      }
+    }
+
+    const content = await db.scrapedContent.findMany({
+      where,
+      orderBy: {
+        publishedAt: "desc",
+      },
+      take: options?.limit || 20,
+      skip: options?.offset || 0,
+    })
+
+    return {
+      success: true,
+      data: content,
+    }
+  } catch (error) {
+    console.error("Error getting saved content:", error)
+    return {
+      success: false,
+      error: "Failed to get saved content",
     }
   }
 }
