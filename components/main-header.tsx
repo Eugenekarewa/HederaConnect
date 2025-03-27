@@ -18,11 +18,19 @@ import { useAuth } from "@/lib/auth/auth-context";
 
 export default function MainHeader() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { setTheme } = useTheme();
+  const { setTheme, theme } = useTheme(); // Access the current theme
   const { user, logout } = useAuth();
 
   return (
-    <header className="border-b sticky top-0 z-40 bg-background">
+    <header
+      className={`sticky top-0 z-40 ${
+        theme === "dark" ? "bg-gray-900 text-white" : "bg-white text-black"
+      } backdrop-blur-[50px]`}
+      style={{
+        WebkitBackdropFilter: "blur(50px)", // For Safari support
+        backdropFilter: "blur(50px)", // For other modern browsers
+      }}
+    >
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center">
@@ -36,33 +44,33 @@ export default function MainHeader() {
             <nav className="hidden md:flex ml-32 space-x-10">
               <Link
                 href="/articles"
-                className="text-sm font-medium hover:text-blue-600"
+                className="text-sm font-medium no-underline hover:text-yellow-500 transition"
               >
                 Articles
               </Link>
               <Link
                 href="/content-explorer"
-                className="text-sm font-medium hover:text-blue-600"
+                className="text-sm font-medium no-underline hover:text-yellow-500 transition"
               >
                 Content Explorer
               </Link>
               <Link
                 href="/topics"
-                className="text-sm font-medium hover:text-blue-600"
+                className="text-sm font-medium no-underline hover:text-yellow-500 transition"
               >
                 Topics
               </Link>
               {user && (
                 <Link
                   href="/rewards"
-                  className="text-sm font-medium hover:text-blue-600"
+                  className="text-sm font-medium no-underline hover:text-yellow-500 transition"
                 >
                   Rewards
                 </Link>
               )}
               <Link
                 href="/about"
-                className="text-sm font-medium hover:text-blue-600"
+                className="text-sm font-medium no-underline hover:text-yellow-500 transition"
               >
                 About
               </Link>
@@ -159,81 +167,37 @@ export default function MainHeader() {
           <nav className="flex flex-col space-y-4 mb-4">
             <Link
               href="/articles"
-              className="text-sm font-medium hover:text-primary"
+              className="text-sm font-medium no-underline hover:text-yellow-500"
             >
               Articles
             </Link>
             <Link
               href="/content-explorer"
-              className="text-sm font-medium hover:text-primary"
+              className="text-sm font-medium no-underline hover:text-yellow-500"
             >
               Content Explorer
             </Link>
             <Link
               href="/topics"
-              className="text-sm font-medium hover:text-primary"
+              className="text-sm font-medium no-underline hover:text-yellow-500"
             >
               Topics
             </Link>
             {user && (
               <Link
                 href="/rewards"
-                className="text-sm font-medium hover:text-primary"
+                className="text-sm font-medium no-underline hover:text-yellow-500"
               >
                 Rewards
               </Link>
             )}
             <Link
               href="/about"
-              className="text-sm font-medium hover:text-primary"
+              className="text-sm font-medium no-underline hover:text-yellow-500"
             >
               About
             </Link>
           </nav>
-          <div className="flex flex-col space-y-4">
-            <div className="relative">
-              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-              <Input
-                type="search"
-                placeholder="Search articles..."
-                className="w-full pl-8"
-              />
-            </div>
-            {user ? (
-              <div className="space-y-2">
-                <div className="flex items-center gap-2 p-2 border rounded-md">
-                  <Avatar className="h-8 w-8">
-                    <AvatarImage src={user.avatar} alt={user.name} />
-                    <AvatarFallback>{user.name.slice(0, 2)}</AvatarFallback>
-                  </Avatar>
-                  <div className="flex-1">
-                    <div className="font-medium">{user.name}</div>
-                    <div className="text-xs text-muted-foreground">
-                      @{user.username}
-                    </div>
-                  </div>
-                </div>
-                <Button variant="outline" className="w-full" asChild>
-                  <Link href={`/${user.username}`}>View Profile</Link>
-                </Button>
-                <Button variant="outline" className="w-full" asChild>
-                  <Link href="/dashboard">Dashboard</Link>
-                </Button>
-                <Button
-                  variant="destructive"
-                  className="w-full"
-                  onClick={logout}
-                >
-                  <LogOut className="h-4 w-4 mr-2" />
-                  Logout
-                </Button>
-              </div>
-            ) : (
-              <Button variant="default" className="w-full" asChild>
-                <Link href="/login">Sign In</Link>
-              </Button>
-            )}
-          </div>
         </div>
       )}
     </header>

@@ -1,4 +1,3 @@
-import MainHeader from "@/components/main-header";
 import ArticlesList from "@/components/articles-list";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";

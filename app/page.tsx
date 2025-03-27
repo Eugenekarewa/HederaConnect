@@ -12,7 +12,7 @@ export default function HomePage() {
       <main className="flex-1">
         {/* Hero Section */}
         <section className="relative">
-          <div className="absolute inset-0 z-0">
+          {/* <div className="absolute inset-0 z-0">
             <Image
               src="https://images.unsplash.com/photo-1639322537228-f710d846310a?q=80&w=2832&auto=format&fit=crop"
               alt="Blockchain background"
@@ -20,7 +20,7 @@ export default function HomePage() {
               priority
               className="object-cover brightness-[0.3]"
             />
-          </div>
+          </div> */}
           <div className="relative z-10 container mx-auto px-4 py-20 md:py-32">
             <div className="max-w-3xl mx-auto text-center">
               {/* <Badge
@@ -52,7 +52,7 @@ export default function HomePage() {
               </div>
             </div>
           </div>
-          <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-background to-transparent"></div>
+          <div className="absolute bottom-0 left-0 right-0 h-24"></div>
         </section>
 
         {/* Features Section */}
