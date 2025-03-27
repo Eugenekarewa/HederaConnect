@@ -1,25 +1,25 @@
-"use client"
+"use client";
 
-import Link from "next/link"
-import { useState } from "react"
-import { Search, Menu, X, Moon, Sun, LogOut } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { useTheme } from "next-themes"
+import Link from "next/link";
+import { useState } from "react";
+import { Search, Menu, X, Moon, Sun, LogOut } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { useTheme } from "next-themes";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
   DropdownMenuSeparator,
-} from "@/components/ui/dropdown-menu"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { useAuth } from "@/lib/auth/auth-context"
+} from "@/components/ui/dropdown-menu";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useAuth } from "@/lib/auth/auth-context";
 
 export default function MainHeader() {
-  const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const { setTheme } = useTheme()
-  const { user, logout } = useAuth()
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { setTheme } = useTheme();
+  const { user, logout } = useAuth();
 
   return (
     <header className="border-b sticky top-0 z-40 bg-background">
@@ -27,24 +27,43 @@ export default function MainHeader() {
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center">
             <Link href="/" className="flex items-center">
-              <span className="text-xl font-bold mr-2">HederaConnect</span>
+              <img
+                src="/fe991a5a-de60-4b4d-805c-1a30a32552c0-removebg-preview.png"
+                alt="photo"
+                style={{ height: "60px", width: "60px" }}
+              />
             </Link>
-            <nav className="hidden md:flex ml-10 space-x-8">
-              <Link href="/articles" className="text-sm font-medium hover:text-primary">
+            <nav className="hidden md:flex ml-32 space-x-10">
+              <Link
+                href="/articles"
+                className="text-sm font-medium hover:text-blue-600"
+              >
                 Articles
               </Link>
-              <Link href="/content-explorer" className="text-sm font-medium hover:text-primary">
+              <Link
+                href="/content-explorer"
+                className="text-sm font-medium hover:text-blue-600"
+              >
                 Content Explorer
               </Link>
-              <Link href="/topics" className="text-sm font-medium hover:text-primary">
+              <Link
+                href="/topics"
+                className="text-sm font-medium hover:text-blue-600"
+              >
                 Topics
               </Link>
               {user && (
-                <Link href="/rewards" className="text-sm font-medium hover:text-primary">
+                <Link
+                  href="/rewards"
+                  className="text-sm font-medium hover:text-blue-600"
+                >
                   Rewards
                 </Link>
               )}
-              <Link href="/about" className="text-sm font-medium hover:text-primary">
+              <Link
+                href="/about"
+                className="text-sm font-medium hover:text-blue-600"
+              >
                 About
               </Link>
             </nav>
@@ -53,7 +72,11 @@ export default function MainHeader() {
           <div className="hidden md:flex items-center space-x-4">
             <div className="relative">
               <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-              <Input type="search" placeholder="Search articles..." className="w-[200px] pl-8" />
+              <Input
+                type="search"
+                placeholder="Search articles..."
+                className="w-[200px] pl-8"
+              />
             </div>
 
             <DropdownMenu>
@@ -65,9 +88,15 @@ export default function MainHeader() {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                <DropdownMenuItem onClick={() => setTheme("light")}>Light</DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setTheme("dark")}>Dark</DropdownMenuItem>
-                <DropdownMenuItem onClick={() => setTheme("system")}>System</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setTheme("light")}>
+                  Light
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setTheme("dark")}>
+                  Dark
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setTheme("system")}>
+                  System
+                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
 
@@ -92,7 +121,10 @@ export default function MainHeader() {
                     <Link href="/settings">Settings</Link>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={logout} className="text-destructive">
+                  <DropdownMenuItem
+                    onClick={logout}
+                    className="text-destructive"
+                  >
                     <LogOut className="h-4 w-4 mr-2" />
                     Logout
                   </DropdownMenuItem>
@@ -106,8 +138,16 @@ export default function MainHeader() {
           </div>
 
           <div className="md:hidden flex items-center">
-            <Button variant="ghost" size="icon" onClick={() => setIsMenuOpen(!isMenuOpen)}>
-              {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+            >
+              {isMenuOpen ? (
+                <X className="h-6 w-6" />
+              ) : (
+                <Menu className="h-6 w-6" />
+              )}
               <span className="sr-only">Toggle menu</span>
             </Button>
           </div>
@@ -117,28 +157,47 @@ export default function MainHeader() {
       {isMenuOpen && (
         <div className="md:hidden p-4 border-t">
           <nav className="flex flex-col space-y-4 mb-4">
-            <Link href="/articles" className="text-sm font-medium hover:text-primary">
+            <Link
+              href="/articles"
+              className="text-sm font-medium hover:text-primary"
+            >
               Articles
             </Link>
-            <Link href="/content-explorer" className="text-sm font-medium hover:text-primary">
+            <Link
+              href="/content-explorer"
+              className="text-sm font-medium hover:text-primary"
+            >
               Content Explorer
             </Link>
-            <Link href="/topics" className="text-sm font-medium hover:text-primary">
+            <Link
+              href="/topics"
+              className="text-sm font-medium hover:text-primary"
+            >
               Topics
             </Link>
             {user && (
-              <Link href="/rewards" className="text-sm font-medium hover:text-primary">
+              <Link
+                href="/rewards"
+                className="text-sm font-medium hover:text-primary"
+              >
                 Rewards
               </Link>
             )}
-            <Link href="/about" className="text-sm font-medium hover:text-primary">
+            <Link
+              href="/about"
+              className="text-sm font-medium hover:text-primary"
+            >
               About
             </Link>
           </nav>
           <div className="flex flex-col space-y-4">
             <div className="relative">
               <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-              <Input type="search" placeholder="Search articles..." className="w-full pl-8" />
+              <Input
+                type="search"
+                placeholder="Search articles..."
+                className="w-full pl-8"
+              />
             </div>
             {user ? (
               <div className="space-y-2">
@@ -149,7 +208,9 @@ export default function MainHeader() {
                   </Avatar>
                   <div className="flex-1">
                     <div className="font-medium">{user.name}</div>
-                    <div className="text-xs text-muted-foreground">@{user.username}</div>
+                    <div className="text-xs text-muted-foreground">
+                      @{user.username}
+                    </div>
                   </div>
                 </div>
                 <Button variant="outline" className="w-full" asChild>
@@ -158,7 +219,11 @@ export default function MainHeader() {
                 <Button variant="outline" className="w-full" asChild>
                   <Link href="/dashboard">Dashboard</Link>
                 </Button>
-                <Button variant="destructive" className="w-full" onClick={logout}>
+                <Button
+                  variant="destructive"
+                  className="w-full"
+                  onClick={logout}
+                >
                   <LogOut className="h-4 w-4 mr-2" />
                   Logout
                 </Button>
@@ -172,6 +237,5 @@ export default function MainHeader() {
         </div>
       )}
     </header>
-  )
+  );
 }
-

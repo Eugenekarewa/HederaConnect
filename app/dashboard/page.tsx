@@ -1,10 +1,10 @@
-import MainHeader from "@/components/main-header"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Progress } from "@/components/ui/progress"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import MainHeader from "@/components/main-header";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   ArrowUpRight,
   ChevronRight,
@@ -14,23 +14,26 @@ import {
   LineChart,
   MessageSquare,
   Share2,
-} from "lucide-react"
-import Link from "next/link"
+} from "lucide-react";
+import Link from "next/link";
 
 export default function DashboardPage() {
   return (
     <div className="min-h-screen flex flex-col">
-      <MainHeader />
       <main className="flex-1 container mx-auto px-4 py-8">
         <div className="mb-8">
           <h1 className="text-3xl font-bold mb-2">Dashboard</h1>
-          <p className="text-muted-foreground">Track your content, engagement, and rewards</p>
+          <p className="text-muted-foreground">
+            Track your content, engagement, and rewards
+          </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium">Articles Published</CardTitle>
+              <CardTitle className="text-sm font-medium">
+                Articles Published
+              </CardTitle>
               <FileText className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
@@ -52,7 +55,9 @@ export default function DashboardPage() {
 
           <Card>
             <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium">Total Shares</CardTitle>
+              <CardTitle className="text-sm font-medium">
+                Total Shares
+              </CardTitle>
               <Share2 className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
@@ -63,7 +68,9 @@ export default function DashboardPage() {
 
           <Card>
             <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium">Rewards Earned</CardTitle>
+              <CardTitle className="text-sm font-medium">
+                Rewards Earned
+              </CardTitle>
               <CircleDollarSign className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
@@ -81,7 +88,9 @@ export default function DashboardPage() {
             <CardContent>
               <div className="h-[300px] flex items-center justify-center bg-muted rounded-md">
                 <LineChart className="h-8 w-8 text-muted-foreground" />
-                <span className="ml-2 text-muted-foreground">Engagement chart would render here</span>
+                <span className="ml-2 text-muted-foreground">
+                  Engagement chart would render here
+                </span>
               </div>
             </CardContent>
           </Card>
@@ -98,7 +107,9 @@ export default function DashboardPage() {
                     <div>Saturday</div>
                   </div>
                   <div className="text-2xl font-bold">~8.2 ℏ</div>
-                  <div className="text-xs text-muted-foreground">Based on current engagement</div>
+                  <div className="text-xs text-muted-foreground">
+                    Based on current engagement
+                  </div>
                 </div>
 
                 <div className="space-y-2">
@@ -107,7 +118,9 @@ export default function DashboardPage() {
                     <div className="font-medium">135/200</div>
                   </div>
                   <Progress value={67.5} className="h-2" />
-                  <div className="text-xs text-muted-foreground">65 more points to reach next tier</div>
+                  <div className="text-xs text-muted-foreground">
+                    65 more points to reach next tier
+                  </div>
                 </div>
 
                 <Button asChild size="sm" className="w-full">
@@ -131,8 +144,12 @@ export default function DashboardPage() {
                   <CardContent className="p-4">
                     <div className="flex items-center justify-between">
                       <div>
-                        <div className="font-medium">Understanding Hedera Consensus Service</div>
-                        <div className="text-sm text-muted-foreground">Published on July 15, 2023</div>
+                        <div className="font-medium">
+                          Understanding Hedera Consensus Service
+                        </div>
+                        <div className="text-sm text-muted-foreground">
+                          Published on July 15, 2023
+                        </div>
                       </div>
                       <div className="flex items-center">
                         <Badge variant="outline" className="mr-4">
@@ -166,8 +183,12 @@ export default function DashboardPage() {
                   <CardContent className="p-4">
                     <div className="flex items-center justify-between">
                       <div>
-                        <div className="font-medium">Building DeFi Applications on Hedera</div>
-                        <div className="text-sm text-muted-foreground">Published on July 10, 2023</div>
+                        <div className="font-medium">
+                          Building DeFi Applications on Hedera
+                        </div>
+                        <div className="text-sm text-muted-foreground">
+                          Published on July 10, 2023
+                        </div>
                       </div>
                       <div className="flex items-center">
                         <Badge variant="outline" className="mr-4">
@@ -201,8 +222,12 @@ export default function DashboardPage() {
                   <CardContent className="p-4">
                     <div className="flex items-center justify-between">
                       <div>
-                        <div className="font-medium">Introduction to Hedera Smart Contracts</div>
-                        <div className="text-sm text-muted-foreground">Published on June 28, 2023</div>
+                        <div className="font-medium">
+                          Introduction to Hedera Smart Contracts
+                        </div>
+                        <div className="text-sm text-muted-foreground">
+                          Published on June 28, 2023
+                        </div>
                       </div>
                       <div className="flex items-center">
                         <Badge variant="outline" className="mr-4">
@@ -246,8 +271,12 @@ export default function DashboardPage() {
                   <CardContent className="p-4">
                     <div className="flex items-center justify-between">
                       <div>
-                        <div className="font-medium">Hedera vs. Other Blockchain Networks: A Comparison</div>
-                        <div className="text-sm text-muted-foreground">By David Chen • August 20, 2023</div>
+                        <div className="font-medium">
+                          Hedera vs. Other Blockchain Networks: A Comparison
+                        </div>
+                        <div className="text-sm text-muted-foreground">
+                          By David Chen • August 20, 2023
+                        </div>
                       </div>
                       <div className="flex items-center">
                         <Badge variant="outline" className="mr-4">
@@ -267,8 +296,12 @@ export default function DashboardPage() {
                   <CardContent className="p-4">
                     <div className="flex items-center justify-between">
                       <div>
-                        <div className="font-medium">Getting Started with the Hedera JavaScript SDK</div>
-                        <div className="text-sm text-muted-foreground">By Emily Zhang • August 15, 2023</div>
+                        <div className="font-medium">
+                          Getting Started with the Hedera JavaScript SDK
+                        </div>
+                        <div className="text-sm text-muted-foreground">
+                          By Emily Zhang • August 15, 2023
+                        </div>
                       </div>
                       <div className="flex items-center">
                         <Badge variant="outline" className="mr-4">
@@ -297,15 +330,25 @@ export default function DashboardPage() {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <Avatar className="h-10 w-10">
-                      <AvatarImage src="/placeholder.svg?height=40&width=40" alt="David Chen" />
+                      <AvatarImage
+                        src="/placeholder.svg?height=40&width=40"
+                        alt="David Chen"
+                      />
                       <AvatarFallback>DC</AvatarFallback>
                     </Avatar>
                     <div>
                       <div className="font-medium">David Chen</div>
-                      <div className="text-sm text-muted-foreground">185 points this week</div>
+                      <div className="text-sm text-muted-foreground">
+                        185 points this week
+                      </div>
                     </div>
                   </div>
-                  <Button variant="ghost" size="sm" className="flex items-center gap-1" asChild>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="flex items-center gap-1"
+                    asChild
+                  >
                     <Link href="/profile/dchen">
                       View Profile <ArrowUpRight className="h-3 w-3" />
                     </Link>
@@ -319,15 +362,25 @@ export default function DashboardPage() {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <Avatar className="h-10 w-10">
-                      <AvatarImage src="/placeholder.svg?height=40&width=40" alt="Jane Cooper" />
+                      <AvatarImage
+                        src="/placeholder.svg?height=40&width=40"
+                        alt="Jane Cooper"
+                      />
                       <AvatarFallback>JC</AvatarFallback>
                     </Avatar>
                     <div>
                       <div className="font-medium">Jane Cooper</div>
-                      <div className="text-sm text-muted-foreground">152 points this week</div>
+                      <div className="text-sm text-muted-foreground">
+                        152 points this week
+                      </div>
                     </div>
                   </div>
-                  <Button variant="ghost" size="sm" className="flex items-center gap-1" asChild>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="flex items-center gap-1"
+                    asChild
+                  >
                     <Link href="/profile/janecooper">
                       View Profile <ArrowUpRight className="h-3 w-3" />
                     </Link>
@@ -341,15 +394,25 @@ export default function DashboardPage() {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <Avatar className="h-10 w-10">
-                      <AvatarImage src="/placeholder.svg?height=40&width=40" alt="Alex Johnson" />
+                      <AvatarImage
+                        src="/placeholder.svg?height=40&width=40"
+                        alt="Alex Johnson"
+                      />
                       <AvatarFallback>AJ</AvatarFallback>
                     </Avatar>
                     <div>
                       <div className="font-medium">Alex Johnson</div>
-                      <div className="text-sm text-muted-foreground">143 points this week</div>
+                      <div className="text-sm text-muted-foreground">
+                        143 points this week
+                      </div>
                     </div>
                   </div>
-                  <Button variant="ghost" size="sm" className="flex items-center gap-1" asChild>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="flex items-center gap-1"
+                    asChild
+                  >
                     <Link href="/profile/alexj">
                       View Profile <ArrowUpRight className="h-3 w-3" />
                     </Link>
@@ -360,12 +423,6 @@ export default function DashboardPage() {
           </div>
         </div>
       </main>
-      <footer className="bg-muted py-6">
-        <div className="container mx-auto px-4 text-center text-muted-foreground">
-          <p>© {new Date().getFullYear()} HederaConnect. Powered by Hedera Hashgraph.</p>
-        </div>
-      </footer>
     </div>
-  )
+  );
 }
-

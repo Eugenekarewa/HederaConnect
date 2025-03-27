@@ -1,16 +1,14 @@
-import MainHeader from "@/components/main-header"
-import ArticlesList from "@/components/articles-list"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { ArrowRight, BookOpen, Globe, Shield, Zap } from "lucide-react"
-import Image from "next/image"
-import Link from "next/link"
+import ArticlesList from "@/components/articles-list";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+
+import { ArrowRight, BookOpen, Globe, Shield, Zap } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
 
 export default function HomePage() {
   return (
     <div className="min-h-screen flex flex-col">
-      <MainHeader />
       <main className="flex-1">
         {/* Hero Section */}
         <section className="relative">
@@ -25,15 +23,19 @@ export default function HomePage() {
           </div>
           <div className="relative z-10 container mx-auto px-4 py-20 md:py-32">
             <div className="max-w-3xl mx-auto text-center">
-              <Badge variant="outline" className="mb-4 bg-background/20 backdrop-blur-sm">
+              {/* <Badge
+                variant="outline"
+                className="mb-4 bg-background/20 backdrop-blur-sm"
+              >
                 Decentralized Knowledge Sharing
-              </Badge>
+              </Badge> */}
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-6 text-white">
-                Discover & Share <span className="text-primary">Hedera</span> Knowledge
+                Discover & Share Hedera Knowledge
               </h1>
               <p className="text-xl text-white/80 mb-8 max-w-2xl mx-auto">
-                Access educational content from across the web and earn rewards for your contributions to the Hedera
-                ecosystem.
+                Access educational content from across the web and earn rewards
+                for your contributions to the{" "}
+                <span className="text-blue-300"> Hedera </span>ecosystem.
               </p>
               <div className="flex flex-wrap justify-center gap-4">
                 <Button size="lg" asChild>
@@ -54,8 +56,10 @@ export default function HomePage() {
         </section>
 
         {/* Features Section */}
-        <section className="py-16 container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-12">Why HederaConnect?</h2>
+        <section className="py-16 container mx-auto px-4 mt-16">
+          <h2 className="text-3xl font-bold text-center mb-12">
+            Why HederaConnect?
+          </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             <Card className="bg-card/50 backdrop-blur-sm border-primary/20">
               <CardContent className="p-6 text-center">
@@ -64,7 +68,8 @@ export default function HomePage() {
                 </div>
                 <h3 className="text-xl font-bold mb-2">Aggregated Content</h3>
                 <p className="text-muted-foreground">
-                  Access Hedera educational content from across the web, all in one place.
+                  Access Hedera educational content from across the web, all in
+                  one place.
                 </p>
               </CardContent>
             </Card>
@@ -76,7 +81,8 @@ export default function HomePage() {
                 </div>
                 <h3 className="text-xl font-bold mb-2">Verified Content</h3>
                 <p className="text-muted-foreground">
-                  Community-verified articles ensure high-quality, accurate information.
+                  Community-verified articles ensure high-quality, accurate
+                  information.
                 </p>
               </CardContent>
             </Card>
@@ -87,7 +93,9 @@ export default function HomePage() {
                   <Zap className="h-6 w-6 text-primary" />
                 </div>
                 <h3 className="text-xl font-bold mb-2">Earn Rewards</h3>
-                <p className="text-muted-foreground">Get HBAR tokens for contributing and engaging with content.</p>
+                <p className="text-muted-foreground">
+                  Get HBAR tokens for contributing and engaging with content.
+                </p>
               </CardContent>
             </Card>
 
@@ -97,7 +105,9 @@ export default function HomePage() {
                   <BookOpen className="h-6 w-6 text-primary" />
                 </div>
                 <h3 className="text-xl font-bold mb-2">Learn & Grow</h3>
-                <p className="text-muted-foreground">Expand your knowledge about Hedera's technology and ecosystem.</p>
+                <p className="text-muted-foreground">
+                  Expand your knowledge about Hedera's technology and ecosystem.
+                </p>
               </CardContent>
             </Card>
           </div>
@@ -108,10 +118,13 @@ export default function HomePage() {
           <div className="container mx-auto px-4">
             <div className="flex flex-col md:flex-row items-center gap-8 md:gap-12">
               <div className="flex-1 order-2 md:order-1">
-                <h2 className="text-3xl font-bold mb-4">Content From Across The Web</h2>
+                <h2 className="text-3xl font-bold mb-4">
+                  Content From Across The Web
+                </h2>
                 <p className="text-muted-foreground mb-6">
-                  HederaConnect aggregates educational content from Twitter, LinkedIn, Medium, Reddit, and YouTube,
-                  bringing the best Hedera resources together in one place.
+                  HederaConnect aggregates educational content from Twitter,
+                  LinkedIn, Medium, Reddit, and YouTube, bringing the best
+                  Hedera resources together in one place.
                 </p>
                 <div className="space-y-4 mb-6">
                   <div className="flex items-center gap-2">
@@ -125,7 +138,9 @@ export default function HomePage() {
                       />
                     </div>
                     <div>
-                      <p className="font-medium">Latest tweets from Hedera experts</p>
+                      <p className="font-medium">
+                        Latest tweets from Hedera experts
+                      </p>
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
@@ -139,7 +154,9 @@ export default function HomePage() {
                       />
                     </div>
                     <div>
-                      <p className="font-medium">In-depth articles from industry professionals</p>
+                      <p className="font-medium">
+                        In-depth articles from industry professionals
+                      </p>
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
@@ -153,12 +170,17 @@ export default function HomePage() {
                       />
                     </div>
                     <div>
-                      <p className="font-medium">Video tutorials and explanations</p>
+                      <p className="font-medium">
+                        Video tutorials and explanations
+                      </p>
                     </div>
                   </div>
                 </div>
                 <Button asChild>
-                  <Link href="/content-explorer" className="inline-flex items-center">
+                  <Link
+                    href="/content-explorer"
+                    className="inline-flex items-center"
+                  >
                     Explore Content <ArrowRight className="ml-2 h-4 w-4" />
                   </Link>
                 </Button>
@@ -206,7 +228,8 @@ export default function HomePage() {
             <div className="max-w-3xl mx-auto">
               <h2 className="text-3xl font-bold mb-4">Ready to Contribute?</h2>
               <p className="text-xl text-muted-foreground mb-8">
-                Share your knowledge about Hedera and earn rewards for your contributions.
+                Share your knowledge about Hedera and earn rewards for your
+                contributions.
               </p>
               <div className="flex flex-wrap justify-center gap-4">
                 <Button size="lg" asChild>
@@ -220,12 +243,6 @@ export default function HomePage() {
           </div>
         </section>
       </main>
-      <footer className="bg-muted py-6">
-        <div className="container mx-auto px-4 text-center text-muted-foreground">
-          <p>© {new Date().getFullYear()} HederaConnect. Powered by Hedera Hashgraph.</p>
-        </div>
-      </footer>
     </div>
-  )
+  );
 }
-

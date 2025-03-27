@@ -1,20 +1,25 @@
-import MainHeader from "@/components/main-header"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Progress } from "@/components/ui/progress"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { ArrowRight, Check, CircleDollarSign, Gem, Trophy } from "lucide-react"
-import Link from "next/link"
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { ArrowRight, Check, CircleDollarSign, Gem, Trophy } from "lucide-react";
+import Link from "next/link";
 
 export default function RewardsPage() {
   return (
     <div className="min-h-screen flex flex-col">
-      <MainHeader />
       <main className="flex-1 container mx-auto px-4 py-8">
         <div className="mb-8">
           <h1 className="text-3xl font-bold mb-4">Contributor Rewards</h1>
           <p className="text-muted-foreground">
-            Earn rewards for sharing and creating educational content about Hedera.
+            Earn rewards for sharing and creating educational content about
+            Hedera.
           </p>
         </div>
 
@@ -26,13 +31,17 @@ export default function RewardsPage() {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">135</div>
-              <p className="text-xs text-muted-foreground">+12 points this week</p>
+              <p className="text-xs text-muted-foreground">
+                +12 points this week
+              </p>
             </CardContent>
           </Card>
 
           <Card>
             <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium">Rewards Earned</CardTitle>
+              <CardTitle className="text-sm font-medium">
+                Rewards Earned
+              </CardTitle>
               <CircleDollarSign className="h-4 w-4 text-primary" />
             </CardHeader>
             <CardContent>
@@ -79,12 +88,18 @@ export default function RewardsPage() {
                 <Card>
                   <CardContent className="p-4 flex justify-between items-center">
                     <div>
-                      <div className="font-medium">Weekly Reward Distribution</div>
-                      <div className="text-sm text-muted-foreground">July 15, 2023</div>
+                      <div className="font-medium">
+                        Weekly Reward Distribution
+                      </div>
+                      <div className="text-sm text-muted-foreground">
+                        July 15, 2023
+                      </div>
                     </div>
                     <div className="text-right">
                       <div className="font-bold">+ 8.5 ℏ</div>
-                      <div className="text-xs text-muted-foreground">From 42 engagement points</div>
+                      <div className="text-xs text-muted-foreground">
+                        From 42 engagement points
+                      </div>
                     </div>
                   </CardContent>
                 </Card>
@@ -92,12 +107,18 @@ export default function RewardsPage() {
                 <Card>
                   <CardContent className="p-4 flex justify-between items-center">
                     <div>
-                      <div className="font-medium">Weekly Reward Distribution</div>
-                      <div className="text-sm text-muted-foreground">July 8, 2023</div>
+                      <div className="font-medium">
+                        Weekly Reward Distribution
+                      </div>
+                      <div className="text-sm text-muted-foreground">
+                        July 8, 2023
+                      </div>
                     </div>
                     <div className="text-right">
                       <div className="font-bold">+ 6.2 ℏ</div>
-                      <div className="text-xs text-muted-foreground">From 31 engagement points</div>
+                      <div className="text-xs text-muted-foreground">
+                        From 31 engagement points
+                      </div>
                     </div>
                   </CardContent>
                 </Card>
@@ -106,11 +127,15 @@ export default function RewardsPage() {
                   <CardContent className="p-4 flex justify-between items-center">
                     <div>
                       <div className="font-medium">Featured Article Bonus</div>
-                      <div className="text-sm text-muted-foreground">July 5, 2023</div>
+                      <div className="text-sm text-muted-foreground">
+                        July 5, 2023
+                      </div>
                     </div>
                     <div className="text-right">
                       <div className="font-bold">+ 5.0 ℏ</div>
-                      <div className="text-xs text-muted-foreground">For "Understanding Hedera Consensus Service"</div>
+                      <div className="text-xs text-muted-foreground">
+                        For "Understanding Hedera Consensus Service"
+                      </div>
                     </div>
                   </CardContent>
                 </Card>
@@ -123,11 +148,15 @@ export default function RewardsPage() {
                   <CardContent className="p-4 flex justify-between items-center">
                     <div>
                       <div className="font-medium">Article Like</div>
-                      <div className="text-sm text-muted-foreground">Today at 2:30 PM</div>
+                      <div className="text-sm text-muted-foreground">
+                        Today at 2:30 PM
+                      </div>
                     </div>
                     <div className="text-right">
                       <div className="font-bold text-primary">+ 1 point</div>
-                      <div className="text-xs text-muted-foreground">On "Building DeFi Applications on Hedera"</div>
+                      <div className="text-xs text-muted-foreground">
+                        On "Building DeFi Applications on Hedera"
+                      </div>
                     </div>
                   </CardContent>
                 </Card>
@@ -136,11 +165,15 @@ export default function RewardsPage() {
                   <CardContent className="p-4 flex justify-between items-center">
                     <div>
                       <div className="font-medium">Article Share</div>
-                      <div className="text-sm text-muted-foreground">Yesterday at 10:15 AM</div>
+                      <div className="text-sm text-muted-foreground">
+                        Yesterday at 10:15 AM
+                      </div>
                     </div>
                     <div className="text-right">
                       <div className="font-bold text-primary">+ 2 points</div>
-                      <div className="text-xs text-muted-foreground">On "Understanding Hedera Consensus Service"</div>
+                      <div className="text-xs text-muted-foreground">
+                        On "Understanding Hedera Consensus Service"
+                      </div>
                     </div>
                   </CardContent>
                 </Card>
@@ -149,11 +182,15 @@ export default function RewardsPage() {
                   <CardContent className="p-4 flex justify-between items-center">
                     <div>
                       <div className="font-medium">New Article</div>
-                      <div className="text-sm text-muted-foreground">July 13, 2023</div>
+                      <div className="text-sm text-muted-foreground">
+                        July 13, 2023
+                      </div>
                     </div>
                     <div className="text-right">
                       <div className="font-bold text-primary">+ 10 points</div>
-                      <div className="text-xs text-muted-foreground">For submitting a new article</div>
+                      <div className="text-xs text-muted-foreground">
+                        For submitting a new article
+                      </div>
                     </div>
                   </CardContent>
                 </Card>
@@ -164,7 +201,9 @@ export default function RewardsPage() {
               <Card>
                 <CardHeader>
                   <CardTitle>Top Contributors This Week</CardTitle>
-                  <CardDescription>Based on engagement points earned from July 10-17</CardDescription>
+                  <CardDescription>
+                    Based on engagement points earned from July 10-17
+                  </CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
@@ -175,7 +214,9 @@ export default function RewardsPage() {
                         </div>
                         <div>
                           <div className="font-medium">David Chen</div>
-                          <div className="text-xs text-muted-foreground">185 points</div>
+                          <div className="text-xs text-muted-foreground">
+                            185 points
+                          </div>
                         </div>
                       </div>
                       <div className="font-bold">32.4 ℏ</div>
@@ -188,7 +229,9 @@ export default function RewardsPage() {
                         </div>
                         <div>
                           <div className="font-medium">Jane Cooper</div>
-                          <div className="text-xs text-muted-foreground">152 points</div>
+                          <div className="text-xs text-muted-foreground">
+                            152 points
+                          </div>
                         </div>
                       </div>
                       <div className="font-bold">26.8 ℏ</div>
@@ -201,7 +244,9 @@ export default function RewardsPage() {
                         </div>
                         <div>
                           <div className="font-medium">Alex Johnson</div>
-                          <div className="text-xs text-muted-foreground">143 points</div>
+                          <div className="text-xs text-muted-foreground">
+                            143 points
+                          </div>
                         </div>
                       </div>
                       <div className="font-bold">25.1 ℏ</div>
@@ -214,7 +259,9 @@ export default function RewardsPage() {
                         </div>
                         <div>
                           <div className="font-medium">You</div>
-                          <div className="text-xs text-muted-foreground">135 points</div>
+                          <div className="text-xs text-muted-foreground">
+                            135 points
+                          </div>
                         </div>
                       </div>
                       <div className="font-bold">24.5 ℏ</div>
@@ -237,7 +284,9 @@ export default function RewardsPage() {
               <CardContent className="space-y-2">
                 <div className="flex items-start gap-2">
                   <Check className="h-5 w-5 text-primary mt-0.5" />
-                  <p className="text-sm">Submit original educational articles</p>
+                  <p className="text-sm">
+                    Submit original educational articles
+                  </p>
                 </div>
                 <div className="flex items-start gap-2">
                   <Check className="h-5 w-5 text-primary mt-0.5" />
@@ -245,7 +294,9 @@ export default function RewardsPage() {
                 </div>
                 <div className="flex items-start gap-2">
                   <Check className="h-5 w-5 text-primary mt-0.5" />
-                  <p className="text-sm">Get content verified by the community</p>
+                  <p className="text-sm">
+                    Get content verified by the community
+                  </p>
                 </div>
               </CardContent>
             </Card>
@@ -277,7 +328,9 @@ export default function RewardsPage() {
               <CardContent className="space-y-2">
                 <div className="flex items-start gap-2">
                   <Check className="h-5 w-5 text-primary mt-0.5" />
-                  <p className="text-sm">Weekly HBAR distributions based on points</p>
+                  <p className="text-sm">
+                    Weekly HBAR distributions based on points
+                  </p>
                 </div>
                 <div className="flex items-start gap-2">
                   <Check className="h-5 w-5 text-primary mt-0.5" />
@@ -285,7 +338,9 @@ export default function RewardsPage() {
                 </div>
                 <div className="flex items-start gap-2">
                   <Check className="h-5 w-5 text-primary mt-0.5" />
-                  <p className="text-sm">Top contributor badges and recognition</p>
+                  <p className="text-sm">
+                    Top contributor badges and recognition
+                  </p>
                 </div>
               </CardContent>
             </Card>
@@ -300,12 +355,6 @@ export default function RewardsPage() {
           </div>
         </div>
       </main>
-      <footer className="bg-muted py-6">
-        <div className="container mx-auto px-4 text-center text-muted-foreground">
-          <p>© {new Date().getFullYear()} HederaConnect. Powered by Hedera Hashgraph.</p>
-        </div>
-      </footer>
     </div>
-  )
+  );
 }
-

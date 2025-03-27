@@ -1,15 +1,21 @@
-import MainHeader from "@/components/main-header"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { ArrowRight, Users, Globe, Lightbulb, Building, GraduationCap, Handshake } from "lucide-react"
-import Image from "next/image"
-import Link from "next/link"
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import {
+  ArrowRight,
+  Users,
+  Globe,
+  Lightbulb,
+  Building,
+  GraduationCap,
+  Handshake,
+} from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
 
 export default function AboutPage() {
   return (
     <div className="min-h-screen flex flex-col">
-      <MainHeader />
       <main className="flex-1">
         {/* Hero Section */}
         <section className="relative">
@@ -24,15 +30,19 @@ export default function AboutPage() {
           </div>
           <div className="relative z-10 container mx-auto px-4 py-20 md:py-32">
             <div className="max-w-3xl">
-              <Badge variant="outline" className="mb-4 bg-background/20 backdrop-blur-sm">
+              <Badge
+                variant="outline"
+                className="mb-4 bg-background/20 backdrop-blur-sm"
+              >
                 Our Mission
               </Badge>
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-6 text-white">
                 Accelerating Hedera Adoption in East Africa
               </h1>
               <p className="text-xl text-white/80 mb-8 max-w-2xl">
-                HederaConnect is dedicated to fostering blockchain education, innovation, and adoption across East
-                Africa, empowering the next generation of developers and entrepreneurs.
+                HederaConnect is dedicated to fostering blockchain education,
+                innovation, and adoption across East Africa, empowering the next
+                generation of developers and entrepreneurs.
               </p>
             </div>
           </div>
@@ -43,17 +53,22 @@ export default function AboutPage() {
         <section className="py-16 container mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
             <div>
-              <h2 className="text-3xl font-bold mb-6">Bridging the Knowledge Gap</h2>
+              <h2 className="text-3xl font-bold mb-6">
+                Bridging the Knowledge Gap
+              </h2>
               <p className="text-lg text-muted-foreground mb-6">
-                Despite the immense potential of blockchain technology to transform economies in East Africa, there
-                remains a significant knowledge gap that hinders widespread adoption. HederaConnect was founded with a
-                clear mission: to make Hedera Hashgraph technology accessible, understandable, and applicable to the
+                Despite the immense potential of blockchain technology to
+                transform economies in East Africa, there remains a significant
+                knowledge gap that hinders widespread adoption. HederaConnect
+                was founded with a clear mission: to make Hedera Hashgraph
+                technology accessible, understandable, and applicable to the
                 unique challenges and opportunities in the region.
               </p>
               <p className="text-lg text-muted-foreground mb-6">
-                By aggregating educational content, fostering community engagement, and incentivizing knowledge sharing,
-                we're building a sustainable ecosystem that supports Hedera's growth across Kenya, Tanzania, Uganda,
-                Rwanda, and beyond.
+                By aggregating educational content, fostering community
+                engagement, and incentivizing knowledge sharing, we're building
+                a sustainable ecosystem that supports Hedera's growth across
+                Kenya, Tanzania, Uganda, Rwanda, and beyond.
               </p>
               <Button asChild size="lg" className="mt-4">
                 <Link href="/content-explorer">
@@ -88,8 +103,9 @@ export default function AboutPage() {
             <div className="text-center mb-12">
               <h2 className="text-3xl font-bold mb-4">Why East Africa?</h2>
               <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-                East Africa represents one of the most promising regions for blockchain adoption, with a young,
-                tech-savvy population and growing digital economy.
+                East Africa represents one of the most promising regions for
+                blockchain adoption, with a young, tech-savvy population and
+                growing digital economy.
               </p>
             </div>
 
@@ -101,8 +117,8 @@ export default function AboutPage() {
                   </div>
                   <h3 className="text-xl font-bold mb-2">Young Population</h3>
                   <p className="text-muted-foreground">
-                    Over 70% of East Africa's population is under 30, creating a massive pool of potential innovators
-                    and early adopters.
+                    Over 70% of East Africa's population is under 30, creating a
+                    massive pool of potential innovators and early adopters.
                   </p>
                 </CardContent>
               </Card>
@@ -114,8 +130,9 @@ export default function AboutPage() {
                   </div>
                   <h3 className="text-xl font-bold mb-2">Mobile Penetration</h3>
                   <p className="text-muted-foreground">
-                    The region has one of the highest mobile penetration rates globally, providing the infrastructure
-                    for blockchain applications.
+                    The region has one of the highest mobile penetration rates
+                    globally, providing the infrastructure for blockchain
+                    applications.
                   </p>
                 </CardContent>
               </Card>
@@ -127,8 +144,8 @@ export default function AboutPage() {
                   </div>
                   <h3 className="text-xl font-bold mb-2">Innovation Hubs</h3>
                   <p className="text-muted-foreground">
-                    Cities like Nairobi, Kigali, and Kampala have become thriving tech hubs with supportive startup
-                    ecosystems.
+                    Cities like Nairobi, Kigali, and Kampala have become
+                    thriving tech hubs with supportive startup ecosystems.
                   </p>
                 </CardContent>
               </Card>
@@ -141,8 +158,8 @@ export default function AboutPage() {
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold mb-4">Our Impact</h2>
             <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-              Since our launch, HederaConnect has made significant strides in advancing Hedera adoption across East
-              Africa.
+              Since our launch, HederaConnect has made significant strides in
+              advancing Hedera adoption across East Africa.
             </p>
           </div>
 
@@ -154,7 +171,9 @@ export default function AboutPage() {
 
             <div className="bg-background rounded-lg p-6 shadow-sm border">
               <div className="text-4xl font-bold text-primary mb-2">15+</div>
-              <div className="text-muted-foreground">University partnerships</div>
+              <div className="text-muted-foreground">
+                University partnerships
+              </div>
             </div>
 
             <div className="bg-background rounded-lg p-6 shadow-sm border">
@@ -179,8 +198,9 @@ export default function AboutPage() {
                   <div>
                     <h4 className="font-bold mb-1">AgriTrack Kenya</h4>
                     <p className="text-muted-foreground">
-                      A supply chain solution built on Hedera that has helped over 10,000 farmers verify and track their
-                      produce from farm to market, increasing their earnings by 30%.
+                      A supply chain solution built on Hedera that has helped
+                      over 10,000 farmers verify and track their produce from
+                      farm to market, increasing their earnings by 30%.
                     </p>
                   </div>
                 </div>
@@ -192,8 +212,10 @@ export default function AboutPage() {
                   <div>
                     <h4 className="font-bold mb-1">EduCred Tanzania</h4>
                     <p className="text-muted-foreground">
-                      A credential verification platform that has helped 5 universities in Tanzania issue tamper-proof
-                      digital certificates to graduates, reducing fraud and verification time.
+                      A credential verification platform that has helped 5
+                      universities in Tanzania issue tamper-proof digital
+                      certificates to graduates, reducing fraud and verification
+                      time.
                     </p>
                   </div>
                 </div>
@@ -205,8 +227,9 @@ export default function AboutPage() {
                   <div>
                     <h4 className="font-bold mb-1">MicroLend Uganda</h4>
                     <p className="text-muted-foreground">
-                      A microfinance platform using Hedera's token service to provide affordable loans to small
-                      businesses, serving over 3,000 entrepreneurs in rural Uganda.
+                      A microfinance platform using Hedera's token service to
+                      provide affordable loans to small businesses, serving over
+                      3,000 entrepreneurs in rural Uganda.
                     </p>
                   </div>
                 </div>
@@ -231,7 +254,8 @@ export default function AboutPage() {
             <div className="text-center mb-12">
               <h2 className="text-3xl font-bold mb-4">Our Approach</h2>
               <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-                HederaConnect employs a multi-faceted approach to drive Hedera adoption in East Africa.
+                HederaConnect employs a multi-faceted approach to drive Hedera
+                adoption in East Africa.
               </p>
             </div>
 
@@ -240,8 +264,9 @@ export default function AboutPage() {
                 <CardContent className="p-6">
                   <h3 className="text-xl font-bold mb-4">Education First</h3>
                   <p className="text-muted-foreground mb-4">
-                    We aggregate and curate high-quality educational content about Hedera from across the web, making it
-                    accessible to learners at all levels.
+                    We aggregate and curate high-quality educational content
+                    about Hedera from across the web, making it accessible to
+                    learners at all levels.
                   </p>
                   <ul className="space-y-2 text-sm">
                     <li className="flex items-center">
@@ -270,8 +295,9 @@ export default function AboutPage() {
                 <CardContent className="p-6">
                   <h3 className="text-xl font-bold mb-4">Community Building</h3>
                   <p className="text-muted-foreground mb-4">
-                    We foster a vibrant community of Hedera enthusiasts, developers, and entrepreneurs across East
-                    Africa through events and networking.
+                    We foster a vibrant community of Hedera enthusiasts,
+                    developers, and entrepreneurs across East Africa through
+                    events and networking.
                   </p>
                   <ul className="space-y-2 text-sm">
                     <li className="flex items-center">
@@ -298,10 +324,13 @@ export default function AboutPage() {
 
               <Card>
                 <CardContent className="p-6">
-                  <h3 className="text-xl font-bold mb-4">Incentivized Participation</h3>
+                  <h3 className="text-xl font-bold mb-4">
+                    Incentivized Participation
+                  </h3>
                   <p className="text-muted-foreground mb-4">
-                    Our token-based reward system encourages content creation, knowledge sharing, and active
-                    participation in the ecosystem.
+                    Our token-based reward system encourages content creation,
+                    knowledge sharing, and active participation in the
+                    ecosystem.
                   </p>
                   <ul className="space-y-2 text-sm">
                     <li className="flex items-center">
@@ -334,8 +363,8 @@ export default function AboutPage() {
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold mb-4">Our Team</h2>
             <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-              HederaConnect is led by a diverse team of blockchain experts, educators, and community builders from
-              across East Africa.
+              HederaConnect is led by a diverse team of blockchain experts,
+              educators, and community builders from across East Africa.
             </p>
           </div>
 
@@ -351,7 +380,9 @@ export default function AboutPage() {
               </div>
               <h3 className="font-bold text-lg">David Mwangi</h3>
               <p className="text-muted-foreground">Founder & CEO</p>
-              <p className="text-sm text-muted-foreground mt-2">Nairobi, Kenya</p>
+              <p className="text-sm text-muted-foreground mt-2">
+                Nairobi, Kenya
+              </p>
             </div>
 
             <div className="text-center">
@@ -365,7 +396,9 @@ export default function AboutPage() {
               </div>
               <h3 className="font-bold text-lg">Sarah Omondi</h3>
               <p className="text-muted-foreground">Head of Education</p>
-              <p className="text-sm text-muted-foreground mt-2">Kampala, Uganda</p>
+              <p className="text-sm text-muted-foreground mt-2">
+                Kampala, Uganda
+              </p>
             </div>
 
             <div className="text-center">
@@ -379,7 +412,9 @@ export default function AboutPage() {
               </div>
               <h3 className="font-bold text-lg">Michael Kagame</h3>
               <p className="text-muted-foreground">Technical Lead</p>
-              <p className="text-sm text-muted-foreground mt-2">Kigali, Rwanda</p>
+              <p className="text-sm text-muted-foreground mt-2">
+                Kigali, Rwanda
+              </p>
             </div>
 
             <div className="text-center">
@@ -393,7 +428,9 @@ export default function AboutPage() {
               </div>
               <h3 className="font-bold text-lg">Grace Nyambura</h3>
               <p className="text-muted-foreground">Community Manager</p>
-              <p className="text-sm text-muted-foreground mt-2">Dar es Salaam, Tanzania</p>
+              <p className="text-sm text-muted-foreground mt-2">
+                Dar es Salaam, Tanzania
+              </p>
             </div>
           </div>
         </section>
@@ -404,7 +441,8 @@ export default function AboutPage() {
             <div className="text-center mb-12">
               <h2 className="text-3xl font-bold mb-4">Our Partners</h2>
               <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-                We collaborate with leading organizations to accelerate Hedera adoption across East Africa.
+                We collaborate with leading organizations to accelerate Hedera
+                adoption across East Africa.
               </p>
             </div>
 
@@ -455,8 +493,8 @@ export default function AboutPage() {
             <div className="max-w-3xl mx-auto">
               <h2 className="text-3xl font-bold mb-4">Join Our Mission</h2>
               <p className="text-xl text-muted-foreground mb-8">
-                Whether you're a developer, educator, entrepreneur, or blockchain enthusiast, there's a place for you in
-                our community.
+                Whether you're a developer, educator, entrepreneur, or
+                blockchain enthusiast, there's a place for you in our community.
               </p>
               <div className="flex flex-wrap justify-center gap-4">
                 <Button size="lg" asChild>
@@ -470,12 +508,6 @@ export default function AboutPage() {
           </div>
         </section>
       </main>
-      <footer className="bg-muted py-6">
-        <div className="container mx-auto px-4 text-center text-muted-foreground">
-          <p>© {new Date().getFullYear()} HederaConnect. Powered by Hedera Hashgraph.</p>
-        </div>
-      </footer>
     </div>
-  )
+  );
 }
-

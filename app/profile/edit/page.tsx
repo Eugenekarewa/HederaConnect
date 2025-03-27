@@ -1,29 +1,38 @@
-import MainHeader from "@/components/main-header"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Separator } from "@/components/ui/separator"
-import { Upload } from "lucide-react"
-import Link from "next/link"
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Separator } from "@/components/ui/separator";
+import { Upload } from "lucide-react";
+import Link from "next/link";
 
 export default function ProfileEditPage() {
   return (
     <div className="min-h-screen flex flex-col">
-      <MainHeader />
       <main className="flex-1 container mx-auto px-4 py-8">
         <div className="max-w-3xl mx-auto">
           <div className="mb-8">
             <h1 className="text-3xl font-bold mb-2">Edit Profile</h1>
-            <p className="text-muted-foreground">Update your profile information and preferences.</p>
+            <p className="text-muted-foreground">
+              Update your profile information and preferences.
+            </p>
           </div>
 
           <Card>
             <CardHeader>
               <CardTitle>Profile Information</CardTitle>
-              <CardDescription>This information will be displayed publicly on your profile.</CardDescription>
+              <CardDescription>
+                This information will be displayed publicly on your profile.
+              </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="flex flex-col md:flex-row gap-6 items-center">
@@ -84,7 +93,10 @@ export default function ProfileEditPage() {
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="website">Website</Label>
-                    <Input id="website" defaultValue="https://davidmwangi.dev" />
+                    <Input
+                      id="website"
+                      defaultValue="https://davidmwangi.dev"
+                    />
                   </div>
                 </div>
 
@@ -102,7 +114,9 @@ export default function ProfileEditPage() {
                 <div className="space-y-2">
                   <Label htmlFor="hederaAccountId">Hedera Account ID</Label>
                   <Input id="hederaAccountId" defaultValue="0.0.12345" />
-                  <p className="text-xs text-muted-foreground">Your Hedera account ID for receiving rewards.</p>
+                  <p className="text-xs text-muted-foreground">
+                    Your Hedera account ID for receiving rewards.
+                  </p>
                 </div>
               </div>
             </CardContent>
@@ -117,10 +131,12 @@ export default function ProfileEditPage() {
       </main>
       <footer className="bg-muted py-6">
         <div className="container mx-auto px-4 text-center text-muted-foreground">
-          <p>© {new Date().getFullYear()} HederaConnect. Powered by Hedera Hashgraph.</p>
+          <p>
+            © {new Date().getFullYear()} HederaConnect. Powered by Hedera
+            Hashgraph.
+          </p>
         </div>
       </footer>
     </div>
-  )
+  );
 }
-
